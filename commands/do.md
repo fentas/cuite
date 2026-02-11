@@ -6,7 +6,32 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite
 
 # `/do` - Universal Workflow Entry Point
 
-Single command interface for all workflows. Analyzes requirements and orchestrates expert agents through plan-build-improve cycles.
+Single command interface for all workflows. Analyzes requirements and orchestrates expert agents through plan-build-security-review-improve cycles.
+
+**Pattern A (Implementation):**
+```
+plan-agent → spec
+     ↓
+User: "Proceed?" → [Yes] / [No]
+     ↓
+build-agent → implementation
+     ↓
+security-agent → security review (can ask user)
+     ↓                  ↑
+     ↓         fix loop (max 3x)
+     ↓
+review-agent → quality check + objective validation
+     ↓                  ↑
+     ↓         fix loop (max 3x)
+     ↓
+User: "Apply suggestions?" → [Yes] / [Skip]
+     ↓
+improve-agent → updates expertise
+```
+
+**Pattern B (Question):** `question-agent → answer`
+
+**Pattern C (Simple):** `build-agent → result`
 
 ## CRITICAL: Orchestration-First Approach
 

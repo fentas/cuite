@@ -8,9 +8,18 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite
 
 Same as `/do` Pattern A but without security review or fix loops. Use when you trust the domain and want speed over thoroughness.
 
-**Flow:**
 ```
-plan-agent → spec → user approval → build-agent → review-agent → user acknowledges → improve-agent
+plan-agent → spec
+     ↓
+User: "Proceed?" → [Yes] / [No]
+     ↓
+build-agent → implementation
+     ↓
+review-agent → quality report + suggestions
+     ↓
+User: "Apply suggestions?" → [Yes] / [Skip]
+     ↓
+improve-agent → updates expertise
 ```
 
 ## CRITICAL: Orchestration-First Approach

@@ -10,6 +10,44 @@ Spawns a team of specialist agents that work in parallel on multi-domain tasks. 
 
 **Requires:** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.
 
+**Implementation Pattern:**
+```
+TeamCreate → initialize team workspace
+     ↓
+TaskCreate → break work into domain-scoped tasks
+     ↓
+Spawn specialists → one per domain
+     ↓
+[domain-a-build]  [domain-b-build]  [domain-c-build]
+     ↓                 ↓                 ↓
+          ↓↓↓ work in parallel ↓↓↓
+     ↓
+security-agent → security review (can ask user)
+     ↓                  ↑
+     ↓         fix loop (max 3x)
+     ↓
+Shut down specialists
+     ↓
+review-agent → quality check + objective validation
+     ↓                  ↑
+     ↓         fix loop (max 3x, re-spawns specialists)
+     ↓
+improve-agent → updates expertise per domain
+     ↓
+TeamDelete → clean up team workspace
+```
+
+**Council Pattern:**
+```
+Spawn analysts → one per domain (read-only)
+     ↓
+[domain-a-analyst]  [domain-b-analyst]  [domain-c-analyst]
+     ↓                   ↓                   ↓
+          ↓↓↓ analyze in parallel ↓↓↓
+     ↓
+Team lead → synthesize findings into unified report
+```
+
 ## CRITICAL: You Are the Team Lead
 
 You orchestrate. Teammates execute. You MUST NOT do implementation work directly.
