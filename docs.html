@@ -373,6 +373,11 @@ docs/* = documentation
             <td>Read-only + Task</td>
             <td>Code review and quality gate. Analyzes implementations, checks for issues, and produces structured review reports.</td>
           </tr>
+          <tr>
+            <td><strong>security-agent</strong></td>
+            <td>Read-only + Bash + AskUserQuestion</td>
+            <td>Security review specialist. Audits changes for OWASP top 10, supply chain risks, and compliance. Can ask the user about ambiguous security decisions. Delegates fixes back to specialists.</td>
+          </tr>
         </tbody>
       </table>
 
@@ -511,6 +516,10 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
 [domain-a-build]  [domain-b-build]  [domain-c-build]
      &darr;                 &darr;                 &darr;
           &darr;&darr;&darr; work in parallel &darr;&darr;&darr;
+     &darr;
+<span class="hl">security-agent</span> &rarr; security review (can ask user)
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
      &darr;
 <span class="hl">Shut down specialists</span>
      &darr;
