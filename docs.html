@@ -74,6 +74,7 @@
       <div class="toc-section">
         <div class="toc-label">Workflows</div>
         <a href="#do-workflow" class="toc-link">/do Workflow</a>
+        <a href="#do-quick-workflow" class="toc-link">/do-quick Workflow</a>
         <a href="#do-teams-workflow" class="toc-link">/do-teams Workflow</a>
         <a href="#improve-workflow" class="toc-link">/improve Workflow</a>
       </div>
@@ -499,6 +500,54 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
 
       <h3>Pattern C: Simple</h3>
       <p>For tasks like running linters, formatting code, or validating configurations. The <code>build-agent</code> executes the task directly without a plan or review phase. These are one-shot operations.</p>
+
+      <h2 id="do-quick-workflow">/do-quick &mdash; Fast Lane</h2>
+      <p>The <code>/do-quick</code> command is the same plan-build-review-improve cycle as <code>/do</code> Pattern A, but <strong>without</strong> the security review or fix loops. Use it for trusted domains, quick iterations, and prototyping.</p>
+
+      <div class="flow-diagram"><span class="hl">plan-agent</span> &rarr; spec
+     &darr;
+User: "Proceed?" &rarr; [Yes] / [No]
+     &darr;
+<span class="hl">build-agent</span> &rarr; implementation
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality report + suggestions
+     &darr;
+User: "Apply suggestions?" &rarr; [Yes] / [Skip]
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise</div>
+
+      <p>Review issues are reported as recommendations rather than blocking. No fix loops, no security gate. When to use which:</p>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th><code>/do-quick</code></th>
+            <th><code>/do</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Security review</td>
+            <td>No</td>
+            <td>Yes (with fix loop)</td>
+          </tr>
+          <tr>
+            <td>Objective validation</td>
+            <td>No</td>
+            <td>Yes (with fix loop)</td>
+          </tr>
+          <tr>
+            <td>Review fix loop</td>
+            <td>No</td>
+            <td>Yes (max 3 iterations)</td>
+          </tr>
+          <tr>
+            <td>Best for</td>
+            <td>Prototyping, trusted domains</td>
+            <td>Production code, security-sensitive</td>
+          </tr>
+        </tbody>
+      </table>
 
       <h2 id="do-teams-workflow">/do-teams &mdash; Parallel Teams</h2>
       <p>The <code>/do-teams</code> command spawns multiple domain specialists to work in parallel. This is the workflow for tasks that span multiple domains or require coordinated changes across the codebase.</p>

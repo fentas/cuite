@@ -44,6 +44,7 @@
       <div class="toc-section">
         <div class="toc-label">Commands</div>
         <a href="#cmd-do" class="toc-link">/do</a>
+        <a href="#cmd-do-quick" class="toc-link">/do-quick</a>
         <a href="#cmd-do-teams" class="toc-link">/do-teams</a>
         <a href="#cmd-improve" class="toc-link">/improve</a>
         <a href="#cmd-cuite-init" class="toc-link">/cuite-init</a>
@@ -139,6 +140,30 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
       <pre class="terminal"><code data-lang="bash">/do "Add user auth endpoint"     # Pattern A
 /do "How does caching work?"     # Pattern B
 /do "Lint all files"             # Pattern C</code></pre>
+
+      <!-- /do-quick -->
+      <h2 id="cmd-do-quick">/do-quick &mdash; Fast Single-Domain Workflow</h2>
+      <p>Same as <code>/do</code> Pattern A but without security review or fix loops. Use when you trust the domain and want speed over thoroughness.</p>
+
+      <pre><code data-lang="yaml">description: Fast workflow without security/review fix loops
+argument-hint: &lt;requirement&gt;
+allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
+
+      <h4>Flow</h4>
+      <p><code>plan &rarr; approve &rarr; build &rarr; review &rarr; acknowledge &rarr; improve</code></p>
+      <p>Review issues are reported as recommendations, not blocking. No security gate, no fix loops.</p>
+
+      <h4>Error Handling</h4>
+      <ul>
+        <li><strong>Plan fails</strong> &mdash; report error, exit</li>
+        <li><strong>Build fails</strong> &mdash; preserve spec, report error, skip review</li>
+        <li><strong>Review fails</strong> &mdash; log, skip improve, workflow succeeds</li>
+        <li><strong>Improve fails</strong> &mdash; log, workflow succeeds</li>
+      </ul>
+
+      <h4>Examples</h4>
+      <pre class="terminal"><code data-lang="bash">/do-quick "Add user auth endpoint"
+/do-quick "Refactor the sidebar component"</code></pre>
 
       <!-- /do-teams -->
       <h2 id="cmd-do-teams">/do-teams &mdash; Team-Based Parallel Execution</h2>
