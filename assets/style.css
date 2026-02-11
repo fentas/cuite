@@ -427,6 +427,8 @@ tbody tr:hover { background: rgba(240, 165, 0, 0.03); }
 }
 
 .hero-cup pre {
+  display: inline-block;
+  text-align: left;
   font-family: var(--font-mono);
   font-size: clamp(0.55rem, 1.4vw, 0.85rem);
   line-height: 1.25;
