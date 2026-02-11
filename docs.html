@@ -467,7 +467,7 @@ docs/* = documentation
            ════════════════════════════════════════════ -->
 
       <h2 id="do-workflow">/do &mdash; Single Domain</h2>
-      <p>The <code>/do</code> command is the primary workflow for single-domain tasks. It routes your task to the appropriate domain and orchestrates a plan-build-review-improve cycle.</p>
+      <p>The <code>/do</code> command is the primary workflow for single-domain tasks. It routes your task to the appropriate domain and orchestrates a plan-build-security-review-improve cycle.</p>
 
       <p><code>/do</code> operates in three patterns depending on the nature of the task:</p>
 
@@ -480,13 +480,19 @@ User: "Proceed?" &rarr; [Yes] / [No]
      &darr;
 <span class="hl">build-agent</span> &rarr; implementation
      &darr;
-<span class="hl">review-agent</span> &rarr; quality report + suggestions
+<span class="hl">security-agent</span> &rarr; security review (can ask user)
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality check + objective validation
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
      &darr;
 User: "Apply suggestions?" &rarr; [Yes] / [Skip]
      &darr;
 <span class="hl">improve-agent</span> &rarr; updates expertise</div>
 
-      <p>The user has two decision points: approving the plan before implementation begins, and acknowledging the review suggestions before expertise updates. This keeps you in control while the agents do the heavy lifting.</p>
+      <p>The user has two decision points: approving the plan before implementation begins, and acknowledging the review suggestions before expertise updates. Both the security agent and the review agent can loop fixes back through the build agent (max 3 iterations each). The review agent also validates measurable objectives and can ask the user about unresolvable requirements.</p>
 
       <h3>Pattern B: Question</h3>
       <p>For tasks that are questions about the codebase rather than implementation requests. The <code>question-agent</code> answers directly using domain expertise and codebase context. No build or review cycle is needed.</p>

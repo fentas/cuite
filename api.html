@@ -108,7 +108,7 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
           <tr>
             <td><strong>A (Implementation)</strong></td>
             <td>fix, add, create, implement, update</td>
-            <td>plan &rarr; approve &rarr; build &rarr; review &rarr; acknowledge &rarr; improve</td>
+            <td>plan &rarr; approve &rarr; build &rarr; security (fix loop) &rarr; review (fix loop) &rarr; acknowledge &rarr; improve</td>
           </tr>
           <tr>
             <td><strong>B (Question)</strong></td>
@@ -127,8 +127,11 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
       <ul>
         <li><strong>Plan fails</strong> &mdash; report error, exit</li>
         <li><strong>User declines plan</strong> &mdash; save spec, exit gracefully</li>
-        <li><strong>Build fails</strong> &mdash; preserve spec, report error, skip review</li>
+        <li><strong>Build fails</strong> &mdash; preserve spec, report error, skip security/review/improve</li>
+        <li><strong>Security review fails</strong> &mdash; log, proceed to general review</li>
+        <li><strong>Security fix loop exhausted (3x)</strong> &mdash; ask user to proceed or abort</li>
         <li><strong>Review fails</strong> &mdash; log, skip improve, workflow succeeds</li>
+        <li><strong>Review fix loop exhausted (3x)</strong> &mdash; ask user to accept or abort</li>
         <li><strong>Improve fails</strong> &mdash; log, workflow succeeds</li>
       </ul>
 
