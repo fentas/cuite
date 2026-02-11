@@ -94,12 +94,13 @@ cuite::init() {
 
   echo ""
   info "Done! Next steps:"
-  echo "  1. Run /cuite-init                   — auto-detect domains and generate everything"
+  echo "  1. Run 'cuite envrc'                 — set up direnv (optional, adds cuite to PATH)"
+  echo "  2. Run /cuite-init                   — auto-detect domains and generate everything"
   echo "  Or manually:"
-  echo "  2. Edit CLAUDE.md                    — project structure table"
-  echo "  3. Edit .claude/domains.md           — domain registry (keywords, paths, commands)"
-  echo "  4. Edit .claude/domain-map.conf      — path-to-domain mappings"
-  echo "  5. Edit .claude/settings.json        — WebFetch whitelist domains"
+  echo "  3. Edit CLAUDE.md                    — project structure table"
+  echo "  4. Edit .claude/domains.md           — domain registry (keywords, paths, commands)"
+  echo "  5. Edit .claude/domain-map.conf      — path-to-domain mappings"
+  echo "  6. Edit .claude/settings.json        — WebFetch whitelist domains"
 }
 
 cuite::link() {
@@ -296,6 +297,44 @@ cuite::diff() {
   git diff HEAD -- "${CUITE_PREFIX}/"
 }
 
+cuite::envrc() {
+  :args "Create or update .envrc to add cuite bin to PATH" "${@}"
+
+  local envrc="${PATH_BASE}/.envrc"
+  local marker="# cuite"
+  local block
+  read -r -d '' block <<'ENVRC' || true
+# cuite
+: "${CUITE_BIN:="$(git rev-parse --show-toplevel)/.claude/cuite/bin"}"
+PATH_add "${CUITE_BIN}"
+# /cuite
+ENVRC
+
+  if [[ ! -f "${envrc}" ]]; then
+    cat > "${envrc}" <<'EOF'
+#!/usr/bin/env bash
+set -eu -o pipefail
+
+EOF
+    echo "${block}" >> "${envrc}"
+    ok "Created ${envrc}"
+  elif grep -q "${marker}" "${envrc}"; then
+    warn "cuite block already exists in ${envrc} — skipping"
+    return 0
+  else
+    echo "" >> "${envrc}"
+    echo "${block}" >> "${envrc}"
+    ok "Appended cuite PATH to ${envrc}"
+  fi
+
+  if command -v direnv &>/dev/null; then
+    info "Run 'direnv allow' to activate"
+  else
+    warn "direnv not installed — install it to auto-load .envrc"
+    echo "  https://direnv.net/docs/installation.html"
+  fi
+}
+
 # ═════════════════════════════════════════════════════════════
 # Main dispatcher
 # ═════════════════════════════════════════════════════════════
@@ -305,6 +344,7 @@ cuite() {
     - "Setup"
     'init'     "Initialize cuite (remote + subtree + symlinks)"
     'link'     "Refresh symlinks"
+    'envrc'    "Create/update .envrc for direnv (adds cuite to PATH)"
     - "Updates"
     'pull'     "Pull framework updates"
     'push'     "Push framework changes back"

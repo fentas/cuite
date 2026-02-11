@@ -200,7 +200,30 @@ If `CLAUDE.md` contains the placeholder table from the template, update it:
 
 **Only update if** the table still has the `example-api` / `example-ui` placeholders.
 
-## Step 5: Report
+## Step 5: direnv Setup
+
+Check if `.envrc` exists. Ask the user:
+
+```yaml
+AskUserQuestion: "Set up direnv? This adds cuite's bin/ to your PATH so you can run `cuite` directly."
+Options: ["Yes — create/update .envrc", "No — skip direnv setup"]
+```
+
+If yes, run:
+
+```bash
+.claude/cuite/bin/cuite envrc
+```
+
+This will:
+
+- Create `.envrc` if it doesn't exist (with `#!/usr/bin/env bash` + `set -eu -o pipefail` header)
+- Append the cuite PATH block if `.envrc` exists but has no cuite section
+- Skip if the cuite block is already present
+
+After running, remind the user to run `direnv allow` if direnv is installed.
+
+## Step 6: Report
 
 ```markdown
 ## /cuite-init Complete
