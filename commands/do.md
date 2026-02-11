@@ -50,7 +50,7 @@ Domains are discovered dynamically — not hardcoded. To identify the correct do
 
 **Pattern A - Implementation (Plan-Build-Review-Improve):**
 - Verbs: fix, add, create, implement, update, configure, refactor
-- Flow: plan-agent → user approval → build-agent → review-agent → user acknowledges suggestions → improve-agent
+- Flow: plan-agent → user approval → build-agent → security-agent (fix loop) → review-agent (fix loop) → user acknowledges suggestions → improve-agent
 
 **Pattern B - Question (Direct Answer):**
 - Phrasing: "How do I...", "What is...", "Why...", "Explain..."
@@ -84,7 +84,60 @@ Task(subagent_type: "<domain>-build-agent", prompt: "SPEC: {spec_path}")
 ```
 Capture files modified. If build fails → skip review and improve, report error.
 
-**Phase 4 - Review:**
+**Phase 4 - Security Review:**
+```
+Task(subagent_type: "security-agent", prompt: |
+  Review the changes just made for: {requirement}
+  Domain: {domain}
+  Files modified: {files_modified from build output}
+
+  Your job:
+  1. Read all modified files
+  2. Run the security checklist from your agent definition
+  3. Verify any new dependencies against their registries via WebFetch
+  4. Ask the user about ambiguous security decisions via AskUserQuestion
+  5. Report findings with severity levels
+
+  You have READ access to all files. You CANNOT modify files — report
+  what needs to change.
+)
+```
+
+Process security review results:
+
+- **PASS (no CRITICAL/HIGH):** Proceed to Phase 5
+- **PASS WITH NOTES (MEDIUM/LOW only):** Include in final report, proceed to Phase 5
+- **CRITICAL/HIGH issues found:** Enter the security fix loop
+
+**Security Fix Loop:** If CRITICAL or HIGH issues were found:
+
+1. Spawn build-agent to fix the flagged issues:
+   ```
+   Task(subagent_type: "<domain>-build-agent", prompt: |
+     Fix these security issues found by the security reviewer:
+
+     {issues with file:line and fix instructions}
+
+     Files you may modify: {files_modified}
+     SPEC: {spec_path}
+   )
+   ```
+2. Re-run security review on the fixed files:
+   ```
+   Task(subagent_type: "security-agent", prompt: |
+     Re-review only the previously flagged files after fixes:
+
+     Files to re-review: {fixed files}
+     Previous issues: {list of issues that were flagged}
+
+     Verify each CRITICAL/HIGH issue is resolved.
+     Check that fixes didn't introduce new issues.
+   )
+   ```
+3. Repeat if re-review finds remaining issues (max 3 iterations)
+4. If issues persist after 3 iterations: report to user via AskUserQuestion, ask whether to proceed or abort
+
+**Phase 5 - Review and Validate:**
 ```
 Task(subagent_type: "review-agent", prompt: |
   Review the changes just made for: {requirement}
@@ -92,16 +145,63 @@ Task(subagent_type: "review-agent", prompt: |
   Files modified: {files_modified from build output}
   Spec: {spec_path}
 
-  Produce your full review including:
+  ORIGINAL REQUIREMENT: {requirement}
+
+  Your job:
   1. Quality assessment (issues by severity)
-  2. Tips Suggestions (operational facts for tips.md)
-  3. Expertise Improvement Suggestions (learnings for expertise.yaml)
-  4. New Agent Suggestions (only if genuine gap found)
+  2. **Validate the original requirement was met** — run tests, check coverage,
+     verify measurable goals. If objectives are not met, report what's missing
+     and what fix is needed
+  3. If an objective can't be met for a technical reason, ask the user via
+     AskUserQuestion whether to accept the gap or require more work
+  4. Tips Suggestions (operational facts for tips.md)
+  5. Expertise Improvement Suggestions (learnings for expertise.yaml)
+  6. New Agent Suggestions (only if genuine gap found)
+
+  You have READ access to all files and can run build/test commands via Bash.
+  You CANNOT modify files — report what needs to change.
+  You CAN ask the user for clarification on ambiguous requirements via AskUserQuestion.
 )
 ```
-Capture the review output. Present the full quality report to the user.
 
-**Phase 5 - Acknowledge Suggestions:**
+Process review results:
+
+- **All OK / objectives met:** Proceed to Phase 6
+- **BLOCKING issues or unmet objectives** with a clear fix: Enter the review fix loop
+- **Objective not met** for technical reasons: Reviewer already asked the user — include the decision in the final report, proceed to Phase 6
+- **WARNING issues only:** Include in the final report, proceed to Phase 6
+
+**Review Fix Loop:** If BLOCKING issues or unmet objectives were found:
+
+1. Spawn build-agent to fix the flagged issues:
+   ```
+   Task(subagent_type: "<domain>-build-agent", prompt: |
+     Fix these issues found by the reviewer:
+
+     {issues with file:line and fix instructions}
+
+     Files you may modify: {files_modified}
+     SPEC: {spec_path}
+   )
+   ```
+2. Re-run review on the fixed files:
+   ```
+   Task(subagent_type: "review-agent", prompt: |
+     Re-review after fixes. Check only the previously flagged files and
+     re-check the objectives:
+
+     ORIGINAL REQUIREMENT: {requirement}
+     Files to re-review: {fixed files}
+     Previous issues: {list of issues that were flagged}
+     Objectives to verify: {measurable goals from the requirement}
+   )
+   ```
+3. Repeat if re-review finds remaining issues (max 3 iterations)
+4. If issues persist after 3 iterations: escalate to user via AskUserQuestion with full details
+
+Capture the final review output. Present the full quality report to the user.
+
+**Phase 6 - Acknowledge Suggestions:**
 
 If the review contains tips, expertise, or agent suggestions:
 ```
@@ -111,7 +211,7 @@ Options: ["Yes, update tips + expertise (Recommended)", "Skip updates"]
 
 If user skips or no suggestions: End workflow after review.
 
-**Phase 6 - Improve (Only if user accepted):**
+**Phase 7 - Improve (Only if user accepted):**
 ```
 Task(subagent_type: "<domain>-improve-agent", prompt: |
   Review recent changes and update tips and expertise.
@@ -160,11 +260,17 @@ Validation checkpoint:
 |-------|--------|------------|
 | Plan | Complete | {spec_path} |
 | Build | Complete | {file_count} files modified |
+| Security | Complete | {PASS / PASS WITH NOTES / required N fix iterations} |
 | Review | Complete | {issue_count} issues, {suggestion_count} expertise suggestions |
 | Improve | Complete/Skipped | {Expert knowledge updated / User skipped} |
 
 ### Files Modified
 {list from build-agent}
+
+### Security Review
+{PASS / PASS WITH NOTES / required N fix iterations}
+{supply chain verification results}
+{user decisions on ambiguous security items, if any}
 
 ### Review Summary
 {quality assessment from review-agent}
@@ -207,8 +313,11 @@ Validation checkpoint:
 - **Classification unclear**: Use AskUserQuestion with domain options
 - **Plan fails**: Report error, exit (no spec to build from)
 - **User declines plan**: Save spec location, exit gracefully (not an error)
-- **Build fails**: Preserve spec, report error, skip review and improve
+- **Build fails**: Preserve spec, report error, skip security review, review, and improve
+- **Security review fails**: Log error, proceed to general review (security is important but shouldn't block the entire workflow on agent failure)
+- **Security fix loop exhausted (3 iterations)**: Ask user whether to proceed or abort
 - **Review fails**: Log error, skip improve, workflow still succeeds (build output is valid)
+- **Review fix loop exhausted (3 iterations)**: Ask user whether to accept current state or abort
 - **User declines suggestions**: End workflow after review (not an error)
 - **Improve fails**: Log error, workflow still succeeds
 
@@ -216,7 +325,7 @@ Validation checkpoint:
 
 ```bash
 /do "Add user auth endpoint"
-# → backend domain (detected from domain-map.conf), Pattern A: plan → approve → build → review → acknowledge → improve
+# → backend domain (detected from domain-map.conf), Pattern A: plan → approve → build → security → review → acknowledge → improve
 
 /do "How does caching work?"
 # → detected domain, Pattern B: question-agent answers
