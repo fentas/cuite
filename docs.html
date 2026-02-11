@@ -157,6 +157,12 @@ rm -rf /tmp/cuite</code></pre>
         The installer never overwrites existing files. If you already have a <code>CLAUDE.md</code> or <code>settings.json</code>, CUITE will skip those files and let you merge manually.
       </div>
 
+      <h3>direnv Setup (optional)</h3>
+      <p>If you use <a href="https://direnv.net/" target="_blank" rel="noopener">direnv</a>, you can add <code>cuite</code> to your PATH automatically:</p>
+      <pre class="terminal"><code data-lang="bash">.claude/cuite/bin/cuite envrc
+direnv allow</code></pre>
+      <p>This creates or updates your <code>.envrc</code> so you can run <code>cuite</code> directly instead of <code>.claude/cuite/bin/cuite</code>. The <code>/cuite-init</code> command will also offer to set this up for you.</p>
+
       <h2 id="first-run">First Run</h2>
       <p>After installation, open Claude Code in your project and run the initialization command:</p>
       <pre class="terminal"><code data-lang="bash">/cuite-init</code></pre>

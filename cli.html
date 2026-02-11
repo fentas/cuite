@@ -45,6 +45,7 @@
         <div class="toc-label">Setup</div>
         <a href="#cli-init" class="toc-link">cuite init</a>
         <a href="#cli-link" class="toc-link">cuite link</a>
+        <a href="#cli-envrc" class="toc-link">cuite envrc</a>
       </div>
 
       <div class="toc-section">
@@ -105,6 +106,43 @@ alias cuite='.claude/cuite/bin/cuite'</code></pre>
 
       <h4>Output</h4>
       <p>Next steps guide recommending <code>/cuite-init</code> or manual setup.</p>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-envrc">cuite envrc</h2>
+      <p>Creates or updates <code>.envrc</code> for <a href="https://direnv.net/" target="_blank" rel="noopener">direnv</a>, adding <code>.claude/cuite/bin</code> to your <code>PATH</code>.</p>
+
+      <h4>Behavior</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No <code>.envrc</code> exists</td>
+            <td>Creates a new file with bash header + cuite PATH block</td>
+          </tr>
+          <tr>
+            <td><code>.envrc</code> exists, no cuite block</td>
+            <td>Appends cuite PATH block</td>
+          </tr>
+          <tr>
+            <td><code>.envrc</code> already has cuite block</td>
+            <td>Skips (no-op)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Generated block</h4>
+      <pre class="terminal"><code data-lang="bash"># cuite
+: "${CUITE_BIN:="$(git rev-parse --show-toplevel)/.claude/cuite/bin"}"
+PATH_add "${CUITE_BIN}"
+# /cuite</code></pre>
+
+      <p>After running, activate with <code>direnv allow</code>. Then <code>cuite</code> is available directly in your shell.</p>
 
       <!-- ─────────────────────────────────────── -->
 
