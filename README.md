@@ -53,7 +53,8 @@ Don't let the name fool you. **Cuite** is a rigorous, reusable framework designe
   * Scope enforcement & Prompt Injection detection.
 * **Self-Improving Expertise:** Agents don't just work; they learn. Post-run summaries update your domain knowledge base automatically.
 * **Orchestration Commands:**
-  * `/do` — Clean, sequential task execution.
+  * `/do` — Full task execution with security + review loops.
+  * `/do-quick` — Fast lane without security/review fix loops.
   * `/do-teams` — Parallelized agent coordination.
   * `/improve` — Dedicated maintenance and refactor mode.
   * `/cuite-init` — Auto-detect domains and bootstrap everything.
@@ -121,7 +122,8 @@ cuite repo root (→ .claude/cuite/ in your project)
   template.md                      # Full setup & usage guide
   teammates.md                     # Runtime workflow reference
   commands/
-    do.md                          # /do — single-domain orchestrator
+    do.md                          # /do — single-domain orchestrator (full)
+    do-quick.md                    # /do-quick — fast lane (no security/review loops)
     do-teams.md                    # /do-teams — parallel team orchestrator
     improve.md                     # /improve — expertise maintenance
     cuite-init.md                  # /cuite-init — domain bootstrapper
