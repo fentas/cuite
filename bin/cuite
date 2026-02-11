@@ -26,6 +26,7 @@ declare -A LINKS=(
   ["${CLAUDE_DIR}/agents/templates"]="../cuite/agents/templates"
   ["${CLAUDE_DIR}/agents/build-agent.md"]="../cuite/agents/build-agent.md"
   ["${CLAUDE_DIR}/agents/review-agent.md"]="../cuite/agents/review-agent.md"
+  ["${CLAUDE_DIR}/agents/security-agent.md"]="../cuite/agents/security-agent.md"
   ["${CLAUDE_DIR}/agents/scout-agent.md"]="../cuite/agents/scout-agent.md"
   # experts
   ["${CLAUDE_DIR}/agents/experts/agent-teams-blueprint.md"]="../../cuite/agents/experts/agent-teams-blueprint.md"

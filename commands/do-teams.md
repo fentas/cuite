@@ -227,9 +227,9 @@ SendMessage(
 
 ---
 
-## Step 6: Review and Validate
+## Step 6: Security Review Loop
 
-**CRITICAL:** Before shutting down teammates, spawn a review agent to cross-validate all changes made by the team. This catches integration issues, file conflicts, and regressions that individual specialists cannot see.
+After all specialist tasks are complete, a security agent reviews changes before the general review gate. This loop can bounce fixes back to specialists until the security agent is satisfied.
 
 ### 6a: Confirm All Specialist Tasks Complete
 
@@ -237,7 +237,114 @@ SendMessage(
 TaskList  # All specialist tasks must be completed
 ```
 
-### 6b: Shut Down Specialists
+### 6b: Create Security Review Task and Spawn Security Agent
+
+```
+TaskCreate(
+  title: "Security review of all team changes",
+  description: |
+    Review ALL changes made by the team for security implications:
+
+    1. Supply chain: Verify any new dependencies against registries
+    2. OWASP top 10: Injection, auth, XSS, path traversal, secrets
+    3. Configuration: Permissions, debug flags, hardcoded values
+    4. Data: PII handling, logging, encryption
+
+    FILES MODIFIED:
+    {list all files reported as modified by teammates}
+
+    TEAMMATES AND THEIR FILE OWNERSHIP:
+    {list each teammate and their owned files}
+
+    You may ask the user for clarification on ambiguous security decisions
+    using AskUserQuestion.
+
+    Report findings with severity levels. CRITICAL and HIGH issues must
+    be fixed before proceeding.
+  owner: "security-reviewer"
+)
+```
+
+Spawn the security agent:
+
+```
+Task(
+  subagent_type: "security-agent",
+  team_name: "{project}-{slug}",
+  name: "security-reviewer",
+  prompt: |
+    You are the security reviewer for this team's changes.
+
+    Check TaskList for your assigned security review task. Read the full task
+    description for the list of modified files and file ownership.
+
+    Your job:
+    1. Read all modified files and their diffs
+    2. Run the security checklist from your agent definition
+    3. Verify any new dependencies against their registries via WebFetch
+    4. Ask the user about ambiguous security decisions via AskUserQuestion
+    5. Report findings to the team lead with severity levels
+
+    You have READ access to all files. You CANNOT modify files — report
+    what needs to change and which specialist should fix it.
+)
+```
+
+### 6c: Process Security Review Results
+
+When the security reviewer reports:
+
+- **No CRITICAL/HIGH issues (PASS):** Proceed to Step 7 (General Review)
+- **CRITICAL/HIGH issues found:** Enter the fix loop (6d)
+- **MEDIUM/LOW only (PASS WITH NOTES):** Include in final report, proceed to Step 7
+
+### 6d: Security Fix Loop
+
+If CRITICAL or HIGH issues were found:
+
+**Re-delegate to specialists:** Send each issue to the relevant specialist via the team lead:
+
+```
+SendMessage(
+  type: "message",
+  recipient: "{domain}-specialist",
+  content: "Security review found issues in your files. Fix these:\n\n{issues with file:line and fix instructions}",
+  summary: "Security fixes required"
+)
+```
+
+**Wait for specialist fixes.** Specialists fix the issues and report back.
+
+**Re-review:** Send the security agent back for a focused re-review:
+
+```
+SendMessage(
+  type: "message",
+  recipient: "security-reviewer",
+  content: "Specialists have applied fixes. Re-review only the flagged files:\n\n{list of files that were fixed}",
+  summary: "Re-review after security fixes"
+)
+```
+
+**Repeat** if the re-review finds remaining issues (max 3 iterations to prevent infinite loops).
+
+If issues persist after 3 iterations: Report to user with details, ask whether to proceed or abort.
+
+### 6e: Shut Down Security Reviewer
+
+```
+SendMessage(type: "shutdown_request", recipient: "security-reviewer", content: "Security review complete")
+```
+
+Wait for shutdown confirmation.
+
+---
+
+## Step 7: Review and Validate
+
+**CRITICAL:** After security review passes, spawn a review agent to cross-validate all changes. This catches integration issues, file conflicts, and regressions that individual specialists cannot see.
+
+### 7a: Shut Down Specialists
 
 Shut down all specialist teammates **before** spawning the reviewer (frees resources, prevents conflicts):
 
@@ -248,7 +355,7 @@ SendMessage(type: "shutdown_request", recipient: "frontend-specialist", content:
 
 Wait for all shutdown confirmations.
 
-### 6c: Create Review Task and Spawn Reviewer
+### 7b: Create Review Task and Spawn Reviewer
 
 Create a review task that covers all modified files from all teammates:
 
@@ -332,7 +439,7 @@ Task(
 )
 ```
 
-### 6d: Process Review Results
+### 7c: Process Review Results
 
 When the reviewer reports back:
 
@@ -341,7 +448,7 @@ When the reviewer reports back:
 - **BLOCKING issues found but not fixable**: Report to user with details, note partial completion
 - **WARNING issues**: Include in the final report under "Recommended Follow-ups"
 
-### 6e: Shut Down Reviewer
+### 7d: Shut Down Reviewer
 
 ```
 SendMessage(type: "shutdown_request", recipient: "reviewer", content: "Review complete")
@@ -349,7 +456,7 @@ SendMessage(type: "shutdown_request", recipient: "reviewer", content: "Review co
 
 Wait for shutdown confirmation.
 
-### 6f: Acknowledge Expertise Suggestions
+### 7e: Acknowledge Expertise Suggestions
 
 If the reviewer produced "Expertise Improvement Suggestions" or "New Agent Suggestions":
 
@@ -358,9 +465,9 @@ AskUserQuestion: "The reviewer suggests expertise improvements. Apply them?"
 Options: ["Yes, update expertise (Recommended)", "Skip expertise update"]
 ```
 
-If user skips or no suggestions: Proceed to Step 7.
+If user skips or no suggestions: Proceed to Step 8.
 
-### 6g: Improve (Only if user accepted)
+### 7f: Improve (Only if user accepted)
 
 Spawn improve-agents for each affected domain, passing the review feedback:
 
@@ -379,15 +486,15 @@ Spawn all domain improve-agents **in parallel** (one per affected domain). Wait 
 
 ---
 
-## Step 7: Clean Up and Report
+## Step 8: Clean Up and Report
 
-### 7a: Clean Up
+### 8a: Clean Up
 
 ```
 TeamDelete  # Removes team and task directories
 ```
 
-### 7b: Report Results
+### 8b: Report Results
 
 ```markdown
 ## `/do-teams` - Complete
@@ -406,6 +513,11 @@ TeamDelete  # Removes team and task directories
 
 ### Files Modified
 - {full list from all teammates}
+
+### Security Review
+- {PASS / PASS WITH NOTES / required N fix iterations}
+- {supply chain verification results}
+- {user decisions on ambiguous security items, if any}
 
 ### Review Results
 - {BLOCKING issues found and fixed, if any}
