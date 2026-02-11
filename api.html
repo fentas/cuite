@@ -385,8 +385,8 @@ allowed-tools: Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion, TodoWrite</
           </tr>
           <tr>
             <td><strong>review-agent.md</strong></td>
-            <td>Read-only + Task spawning</td>
-            <td>Produces quality assessment, expertise improvement suggestions, new agent suggestions.</td>
+            <td>Read-only + Bash + AskUserQuestion</td>
+            <td>Quality assessment with objective validation. Runs tests/coverage/benchmarks to verify measurable goals were met. Re-delegates unmet objectives to specialists via team lead (max 3 iterations). Can ask the user about unresolvable requirements. Produces expertise improvement and new agent suggestions.</td>
           </tr>
           <tr>
             <td><strong>security-agent.md</strong></td>

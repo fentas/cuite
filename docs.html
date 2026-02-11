@@ -370,8 +370,8 @@ docs/* = documentation
           </tr>
           <tr>
             <td><strong>review-agent</strong></td>
-            <td>Read-only + Task</td>
-            <td>Code review and quality gate. Analyzes implementations, checks for issues, and produces structured review reports.</td>
+            <td>Read-only + Bash + AskUserQuestion</td>
+            <td>Code review, quality gate, and objective validation. Runs tests/coverage/benchmarks to verify measurable goals. Can ask the user about unresolvable requirements. Delegates fixes back to specialists via re-delegation loop (max 3 iterations).</td>
           </tr>
           <tr>
             <td><strong>security-agent</strong></td>
@@ -523,7 +523,9 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
      &darr;
 <span class="hl">Shut down specialists</span>
      &darr;
-<span class="hl">review-agent</span> &rarr; cross-domain quality check
+<span class="hl">review-agent</span> &rarr; quality check + objective validation
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x, re-spawns specialists)
      &darr;
 <span class="hl">improve-agent</span> &rarr; updates expertise per domain
      &darr;
