@@ -424,18 +424,25 @@ Task(
 
     Check TaskList for your assigned review task. Read the full task description from the task list.
 
+    ORIGINAL REQUIREMENT: {requirement}
+
     Your job:
     1. Read `git diff` or the modified files to understand all changes
     2. Verify builds compile and tests pass across ALL modified domains
     3. Check for integration issues between domains
     4. Check for file ownership violations
-    5. Fix any BLOCKING issues directly
-    6. Produce "Expertise Improvement Suggestions" — learnings worth capturing in expertise.yaml
-    7. Produce "New Agent Suggestions" — only if a genuine coverage gap was found
-    8. Report all findings to the team lead
+    5. **Validate the original requirement was met** — run tests, check coverage,
+       verify measurable goals. If objectives are not met, report what's missing
+       and which specialist should fix it
+    6. If an objective can't be met for a technical reason, ask the user via
+       AskUserQuestion whether to accept the gap or require more work
+    7. Produce "Expertise Improvement Suggestions" — learnings worth capturing in expertise.yaml
+    8. Produce "New Agent Suggestions" — only if a genuine coverage gap was found
+    9. Report all findings to the team lead
 
-    You have READ access to all files and can run build/test commands.
-    You may EDIT files only to fix BLOCKING issues.
+    You have READ access to all files and can run build/test commands via Bash.
+    You CANNOT modify files — report what needs to change and which specialist should fix it.
+    You CAN ask the user for clarification on ambiguous requirements via AskUserQuestion.
 )
 ```
 
@@ -443,10 +450,56 @@ Task(
 
 When the reviewer reports back:
 
-- **All OK**: Proceed to expertise acknowledgment
-- **BLOCKING issues found and fixed**: Verify the fixes, then proceed
-- **BLOCKING issues found but not fixable**: Report to user with details, note partial completion
-- **WARNING issues**: Include in the final report under "Recommended Follow-ups"
+- **All OK / objectives met**: Proceed to Step 7d (shut down reviewer)
+- **BLOCKING issues found**: Enter the review fix loop (7c-i)
+- **Objective not met** with a clear fix: Enter the review fix loop (7c-i)
+- **Objective not met** for technical reasons: Reviewer already asked the user — include the decision in the final report
+- **WARNING issues only**: Include in the final report under "Recommended Follow-ups", proceed to 7d
+
+#### 7c-i: Review Fix Loop
+
+If the reviewer reports BLOCKING issues or unmet objectives that specialists can fix:
+
+**Re-spawn the relevant specialist(s)** (they were shut down in 7a):
+
+```
+Task(
+  subagent_type: "general-purpose",
+  team_name: "{project}-{slug}",
+  name: "{domain}-specialist",
+  prompt: |
+    You are being re-spawned to address review findings.
+
+    EXPERTISE: Read .claude/agents/experts/{domain}/expertise.yaml for domain knowledge.
+
+    FIX THESE ISSUES:
+    {issues from reviewer with file:line and fix instructions}
+
+    YOUR FILE OWNERSHIP (same as before):
+    - {files}
+
+    Fix the issues and report back when done.
+)
+```
+
+**Wait for specialist fixes.** Specialists fix the issues and report back.
+
+**Shut down re-spawned specialists** after they complete their fixes.
+
+**Re-review:** Send the reviewer back for focused re-review:
+
+```
+SendMessage(
+  type: "message",
+  recipient: "reviewer",
+  content: "Specialists have applied fixes. Re-review only the flagged files and re-check the objectives:\n\n{list of files fixed and objectives to verify}",
+  summary: "Re-review after fixes"
+)
+```
+
+**Repeat** if the re-review finds remaining issues (max 3 iterations to prevent infinite loops).
+
+If issues persist after 3 iterations: escalate to user via `AskUserQuestion` with full details, ask whether to accept current state or abort.
 
 ### 7d: Shut Down Reviewer
 
