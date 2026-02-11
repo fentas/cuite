@@ -139,10 +139,12 @@
       </ul>
 
       <h2 id="installation">Installation</h2>
-      <p>CUITE installs itself as a git subtree inside your project. The installer clones the framework, runs the <code>init</code> command, and cleans up after itself.</p>
-      <pre class="terminal"><code data-lang="bash">git clone https://github.com/fentas/cuite.git /tmp/cuite
+      <p>CUITE installs itself as a git subtree inside your project. Run these commands <strong>from your project root</strong>:</p>
+      <pre class="terminal"><code data-lang="bash">cd /path/to/your-project
+git clone https://github.com/fentas/cuite.git /tmp/cuite
 /tmp/cuite/bin/cuite init
 rm -rf /tmp/cuite</code></pre>
+      <p>The temporary clone is only needed to bootstrap. The <code>init</code> command uses <code>git subtree add</code> to embed the framework into your project at <code>.claude/cuite/</code>, after which the <code>/tmp</code> clone can be deleted.</p>
 
       <p>Here is what the <code>init</code> command does under the hood:</p>
       <ol>
