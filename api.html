@@ -96,33 +96,33 @@ allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
         <li>Fallback: generic <code>build-agent</code> or ask user</li>
       </ol>
 
-      <h4>Patterns</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>Pattern</th>
-            <th>Trigger</th>
-            <th>Flow</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>A (Implementation)</strong></td>
-            <td>fix, add, create, implement, update</td>
-            <td>plan &rarr; approve &rarr; build &rarr; security (fix loop) &rarr; review (fix loop) &rarr; acknowledge &rarr; improve</td>
-          </tr>
-          <tr>
-            <td><strong>B (Question)</strong></td>
-            <td>how, what, why, explain</td>
-            <td>question-agent &rarr; answer</td>
-          </tr>
-          <tr>
-            <td><strong>C (Simple)</strong></td>
-            <td>format, lint, validate, check</td>
-            <td>build-agent &rarr; result</td>
-          </tr>
-        </tbody>
-      </table>
+      <h4>Pattern A: Implementation</h4>
+      <div class="flow-diagram"><span class="hl">plan-agent</span> &rarr; spec
+     &darr;
+User: "Proceed?" &rarr; [Yes] / [No]
+     &darr;
+<span class="hl">build-agent</span> &rarr; implementation
+     &darr;
+<span class="hl">security-agent</span> &rarr; security review (can ask user)
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality check + objective validation
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
+     &darr;
+User: "Apply suggestions?" &rarr; [Yes] / [Skip]
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise</div>
+      <p><strong>Triggers:</strong> fix, add, create, implement, update, configure, refactor</p>
+
+      <h4>Pattern B: Question</h4>
+      <p><code>question-agent &rarr; answer</code></p>
+      <p><strong>Triggers:</strong> how, what, why, explain</p>
+
+      <h4>Pattern C: Simple</h4>
+      <p><code>build-agent &rarr; result</code></p>
+      <p><strong>Triggers:</strong> format, lint, validate, check</p>
 
       <h4>Error Handling</h4>
       <ul>
@@ -150,7 +150,17 @@ argument-hint: &lt;requirement&gt;
 allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
 
       <h4>Flow</h4>
-      <p><code>plan &rarr; approve &rarr; build &rarr; review &rarr; acknowledge &rarr; improve</code></p>
+      <div class="flow-diagram"><span class="hl">plan-agent</span> &rarr; spec
+     &darr;
+User: "Proceed?" &rarr; [Yes] / [No]
+     &darr;
+<span class="hl">build-agent</span> &rarr; implementation
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality report + suggestions
+     &darr;
+User: "Apply suggestions?" &rarr; [Yes] / [Skip]
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise</div>
       <p>Review issues are reported as recommendations, not blocking. No security gate, no fix loops.</p>
 
       <h4>Error Handling</h4>
@@ -201,18 +211,39 @@ allowed-tools: Read, Glob, Grep, Task, SendMessage, TeamCreate, TeamDelete, Task
         </tbody>
       </table>
 
-      <h4>Team Lifecycle</h4>
-      <ol>
-        <li><strong>TeamCreate</strong> &mdash; establish team</li>
-        <li><strong>TaskCreate</strong> &mdash; break into tasks with file ownership</li>
-        <li>Spawn teammates (all in one message for parallelism)</li>
-        <li>Monitor and coordinate</li>
-        <li><strong>Security review</strong> &mdash; security-agent audits changes (can ask user, loops fixes back to specialists, max 3 iterations)</li>
-        <li>Shut down specialists</li>
-        <li>Spawn reviewer for cross-validation</li>
-        <li>Acknowledge expertise suggestions</li>
-        <li><strong>TeamDelete</strong> + report</li>
-      </ol>
+      <h4>Implementation Flow</h4>
+      <div class="flow-diagram"><span class="hl">TeamCreate</span> &rarr; initialize team workspace
+     &darr;
+<span class="hl">TaskCreate</span> &rarr; break work into domain-scoped tasks
+     &darr;
+<span class="hl">Spawn specialists</span> &rarr; one per domain
+     &darr;
+[domain-a-build]  [domain-b-build]  [domain-c-build]
+     &darr;                 &darr;                 &darr;
+          &darr;&darr;&darr; work in parallel &darr;&darr;&darr;
+     &darr;
+<span class="hl">security-agent</span> &rarr; security review (can ask user)
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x)
+     &darr;
+<span class="hl">Shut down specialists</span>
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality check + objective validation
+     &darr;                  &uarr;
+     &darr;         fix loop (max 3x, re-spawns specialists)
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise per domain
+     &darr;
+<span class="hl">TeamDelete</span> &rarr; clean up team workspace</div>
+
+      <h4>Council Flow</h4>
+      <div class="flow-diagram"><span class="hl">Spawn analysts</span> &rarr; one per domain (read-only)
+     &darr;
+[domain-a-analyst]  [domain-b-analyst]  [domain-c-analyst]
+     &darr;                   &darr;                   &darr;
+          &darr;&darr;&darr; analyze in parallel &darr;&darr;&darr;
+     &darr;
+<span class="hl">Team lead</span> &rarr; synthesize findings into unified report</div>
 
       <h4>File Ownership Rule</h4>
       <div class="callout callout-warn">
