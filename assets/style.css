@@ -208,6 +208,10 @@ pre:hover .code-copy { opacity: 1; }
 .code-copy:hover { color: var(--amber-400); border-color: var(--border-active); }
 .code-copy.copied { color: var(--amber-400); }
 
+.install-link { margin-top: calc(-1 * var(--space-md)); font-size: 0.85rem; }
+.install-link a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+.install-link a:hover { color: var(--amber-400); }
+
 /* Syntax */
 .syn-kw { color: var(--syn-keyword); }
 .syn-str { color: var(--syn-string); }
