@@ -67,6 +67,12 @@ Cuite lives at `.claude/cuite/` via git subtree. Symlinks bridge it to `.claude/
 
 ```bash
 # Run from your project root
+curl -fsSL https://cuite.quest/install.sh | bash
+```
+
+Or manually:
+
+```bash
 cd /path/to/your-project
 git clone https://github.com/fentas/cuite.git /tmp/cuite  # or your fork
 /tmp/cuite/bin/cuite init
