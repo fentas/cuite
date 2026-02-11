@@ -27,6 +27,8 @@
 It turns complex development tasks into a seamless, multi-agent session where the only thing
 getting hammered is your technical debt.
 
+[**Documentation**](https://cuite.quest) · [**API Reference**](https://cuite.quest/api.html) · [**CLI Reference**](https://cuite.quest/cli.html)
+
 </div>
 
 ## 🍸 The Workflow
@@ -64,7 +66,8 @@ Cuite lives at `.claude/cuite/` via git subtree. Symlinks bridge it to `.claude/
 **Fork first** if you want to customize the framework itself (hooks, commands, templates) or contribute improvements back.
 
 ```bash
-# One-liner init
+# Run from your project root
+cd /path/to/your-project
 git clone https://github.com/fentas/cuite.git /tmp/cuite  # or your fork
 /tmp/cuite/bin/cuite init
 rm -rf /tmp/cuite
