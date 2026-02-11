@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUITE - The Claude sUITE Framework</title>
+  <meta name="description" content="CUITE - The Claude sUITE Framework. Orchestrate teams of Claude Code agents.">
+  <meta property="og:title" content="CUITE - The Claude sUITE Framework">
+  <meta property="og:description" content="CUITE - The Claude sUITE Framework. Orchestrate teams of Claude Code agents.">
+  <meta property="og:url" content="https://cuite.quest">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥴</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="home">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">🥴 CUITE</a>
+      <nav class="site-nav">
+        <a href="docs.html">Docs</a>
+        <a href="api.html">API</a>
+        <a href="cli.html">CLI</a>
+        <a href="https://github.com/fentas/cuite" class="nav-github" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="20" height="20"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-cup">
+      <div class="steam-container">
+        <span class="steam"></span>
+        <span class="steam"></span>
+        <span class="steam"></span>
+        <span class="steam"></span>
+        <span class="steam"></span>
+      </div>
+      <pre>
+      .----------------.
+     |   _          _   |
+     |  | |        | |  |
+     |  | |   __   | |  |    "Code responsibly.
+     |  | |__/  \__| |  |     Or don't."
+     |  |____________|  |
+      '----------------'</pre>
+    </div>
+    <h1 class="hero-title">CUITE</h1>
+    <p class="hero-subtitle">The Claude sUITE Framework</p>
+    <p class="hero-description">Orchestrate teams of Claude Code agents. Turn complex development tasks into seamless, multi-agent sessions where the only thing getting hammered is your technical debt.</p>
+    <div class="hero-actions">
+      <a href="docs.html" class="btn btn-primary">Get Started</a>
+      <a href="https://github.com/fentas/cuite" class="btn btn-ghost">GitHub</a>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-red">
+        <span class="badge-label">Stability</span>
+        <span class="badge-value">Hazardous</span>
+      </span>
+      <span class="badge badge-green">
+        <span class="badge-label">Vibe</span>
+        <span class="badge-value">Immaculate</span>
+      </span>
+      <span class="badge badge-blue">
+        <span class="badge-label">Reasoning</span>
+        <span class="badge-value">Anthropic</span>
+      </span>
+      <span class="badge badge-amber">
+        <span class="badge-label">Powered by</span>
+        <span class="badge-value">Claude Code</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="landing-section fade-in">
+    <p class="section-label">Features</p>
+    <h2 class="section-title">Everything you need to orchestrate AI agents</h2>
+    <div class="features-grid stagger">
+
+      <div class="feature-card">
+        <span class="feature-icon">&#x2316;</span>
+        <h3 class="feature-title">Domain-Specialized Agents</h3>
+        <p class="feature-desc">Auto context-switches between specialized personas &mdash; Plan, Build, Improve, and Question &mdash; based on file paths and domain detection.</p>
+        <div class="feature-tags">
+          <span class="feature-tag">plan</span>
+          <span class="feature-tag">build</span>
+          <span class="feature-tag">improve</span>
+          <span class="feature-tag">question</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#x1F6E1;</span>
+        <h3 class="feature-title">Security Hooks</h3>
+        <p class="feature-desc">Six enforcement hooks run on every agent. Supply chain verification, network egress whitelisting, prompt injection detection, and scope enforcement.</p>
+        <div class="feature-tags">
+          <span class="feature-tag">supply-chain</span>
+          <span class="feature-tag">network</span>
+          <span class="feature-tag">injection</span>
+          <span class="feature-tag">scope</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#x1F9E0;</span>
+        <h3 class="feature-title">Self-Improving Expertise</h3>
+        <p class="feature-desc">Agents don't just work &mdash; they learn. Every build cycle feeds the review-improve loop, updating tips.md and expertise.yaml automatically.</p>
+        <div class="feature-tags">
+          <span class="feature-tag">tips.md</span>
+          <span class="feature-tag">expertise.yaml</span>
+          <span class="feature-tag">flywheel</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#x26A1;</span>
+        <h3 class="feature-title">Orchestration Commands</h3>
+        <p class="feature-desc">Five commands cover every workflow. <code>/do</code> for single-domain tasks, <code>/do-teams</code> for parallel work, <code>/improve</code> for maintenance.</p>
+        <div class="feature-tags">
+          <span class="feature-tag">/do</span>
+          <span class="feature-tag">/do-teams</span>
+          <span class="feature-tag">/improve</span>
+          <span class="feature-tag">/cuite-init</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="landing-section fade-in">
+    <p class="section-label">Quick Start</p>
+    <h2 class="section-title">Up and running in 60 seconds</h2>
+    <pre class="terminal"><code data-lang="bash"># Install cuite into your project
+git clone https://github.com/fentas/cuite.git /tmp/cuite
+/tmp/cuite/bin/cuite init
+rm -rf /tmp/cuite</code></pre>
+    <p>Then bootstrap your domains:</p>
+    <pre class="terminal"><code data-lang="bash">/cuite-init</code></pre>
+    <p>This scans your repo, detects languages and sub-projects, proposes domains, and on approval generates <code>domains.md</code>, <code>domain-map.conf</code>, and starter expertise files.</p>
+  </section>
+
+  <!-- Architecture -->
+  <section class="landing-section fade-in">
+    <p class="section-label">Architecture</p>
+    <h2 class="section-title">Hybrid subtree + symlinks</h2>
+    <p class="section-desc">Framework travels via git subtree. Symlinks bridge to where Claude Code expects files. Your domain expertise stays in your project.</p>
+    <div class="arch-grid">
+
+      <div class="arch-column">
+        <h4>Framework <code>.claude/cuite/</code></h4>
+        <div class="arch-item">hooks/</div>
+        <div class="arch-item">commands/</div>
+        <div class="arch-item">agents/</div>
+        <div class="arch-item">templates/</div>
+        <div class="arch-item">bin/cuite</div>
+      </div>
+
+      <div class="arch-arrow">&rarr;</div>
+
+      <div class="arch-column">
+        <h4>Symlinks <code>.claude/</code></h4>
+        <div class="arch-item">hooks <span class="hl">&rarr;</span></div>
+        <div class="arch-item">commands <span class="hl">&rarr;</span></div>
+        <div class="arch-item">agents/*.md <span class="hl">&rarr;</span></div>
+        <div class="arch-item">templates <span class="hl">&rarr;</span></div>
+      </div>
+
+      <div class="arch-arrow">+</div>
+
+      <div class="arch-column">
+        <h4>Your Project <code>.claude/</code></h4>
+        <div class="arch-item">settings.json</div>
+        <div class="arch-item">domains.md</div>
+        <div class="arch-item">domain-map.conf</div>
+        <div class="arch-item">experts/<span class="hl">your-domain</span>/</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="docs.html">Documentation</a>
+        <a href="api.html">API Reference</a>
+        <a href="cli.html">CLI Reference</a>
+        <a href="https://github.com/fentas/cuite">GitHub</a>
+      </div>
+      <p class="footer-copy">CUITE &mdash; The Claude sUITE Framework. Code responsibly. Or don't.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

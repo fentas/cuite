@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLI Reference - CUITE</title>
+  <meta name="description" content="CLI reference for the CUITE framework management tool. Setup, updates, maintenance, and configuration commands.">
+  <meta property="og:title" content="CLI Reference - CUITE">
+  <meta property="og:description" content="CLI reference for the CUITE framework management tool. Setup, updates, maintenance, and configuration commands.">
+  <meta property="og:url" content="https://cuite.quest/cli.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥴</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="cli">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">🥴 CUITE</a>
+      <nav class="site-nav">
+        <a href="docs.html">Docs</a>
+        <a href="api.html">API</a>
+        <a href="cli.html" class="active">CLI</a>
+        <a href="https://github.com/fentas/cuite" class="nav-github" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="20" height="20"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- TOC Toggle (mobile) -->
+  <button class="toc-toggle" aria-label="Table of contents">&#9776;</button>
+
+  <!-- Doc Layout -->
+  <div class="doc-layout">
+
+    <!-- Sidebar TOC -->
+    <aside class="doc-sidebar">
+
+      <div class="toc-section">
+        <div class="toc-label">Setup</div>
+        <a href="#cli-init" class="toc-link">cuite init</a>
+        <a href="#cli-link" class="toc-link">cuite link</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Updates</div>
+        <a href="#cli-pull" class="toc-link">cuite pull</a>
+        <a href="#cli-push" class="toc-link">cuite push</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Maintenance</div>
+        <a href="#cli-settings" class="toc-link">cuite settings</a>
+        <a href="#cli-status" class="toc-link">cuite status</a>
+        <a href="#cli-log" class="toc-link">cuite log</a>
+        <a href="#cli-diff" class="toc-link">cuite diff</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Configuration</div>
+        <a href="#cli-env" class="toc-link">Environment Variables</a>
+        <a href="#cli-files" class="toc-link">File Categories</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Makefile</div>
+        <a href="#cli-makefile" class="toc-link">Makefile Helper</a>
+      </div>
+
+    </aside>
+
+    <!-- Content -->
+    <main class="doc-content">
+
+      <h1>CLI Reference</h1>
+      <p>The <code>bin/cuite</code> management CLI for framework setup, updates, and maintenance.</p>
+
+      <h4>Usage</h4>
+      <pre class="terminal"><code data-lang="bash">.claude/cuite/bin/cuite &lt;command&gt;
+
+# Or alias it
+alias cuite='.claude/cuite/bin/cuite'</code></pre>
+
+      <!-- ═══════════════════════════════════════
+           SETUP COMMANDS
+           ═══════════════════════════════════════ -->
+
+      <h2 id="cli-init">cuite init</h2>
+      <p>Full setup: adds git remote, creates subtree, sets up symlinks, copies starter files.</p>
+
+      <h4>What it does</h4>
+      <ol>
+        <li>Adds <code>cuite</code> git remote pointing to the framework repo</li>
+        <li>Runs <code>git subtree add</code> to create <code>.claude/cuite/</code></li>
+        <li>Creates all symlinks via <code>cuite link</code></li>
+        <li>Copies starter files (<code>settings.json</code>, <code>domain-map.conf</code>, <code>domains.md</code>, <code>CLAUDE.md</code>, etc.) &mdash; only if they don't already exist</li>
+        <li>Creates <code>.claude/.cache/</code> directory</li>
+        <li>Adds <code>settings.local.json</code> to <code>.gitignore</code></li>
+      </ol>
+
+      <h4>Output</h4>
+      <p>Next steps guide recommending <code>/cuite-init</code> or manual setup.</p>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-link">cuite link</h2>
+      <p>Creates or refreshes all symlinks from <code>.claude/</code> to <code>.claude/cuite/</code>.</p>
+
+      <h4>Symlinks created</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Symlink</th>
+            <th>Target</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>.claude/hooks</code></td>
+            <td><code>cuite/hooks</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/commands</code></td>
+            <td><code>cuite/commands</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/agents/templates</code></td>
+            <td><code>../cuite/agents/templates</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/agents/build-agent.md</code></td>
+            <td><code>../cuite/agents/build-agent.md</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/agents/review-agent.md</code></td>
+            <td><code>../cuite/agents/review-agent.md</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/agents/scout-agent.md</code></td>
+            <td><code>../cuite/agents/scout-agent.md</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/agents/experts/agent-teams-blueprint.md</code></td>
+            <td><code>../../cuite/agents/experts/agent-teams-blueprint.md</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/template.md</code></td>
+            <td><code>cuite/template.md</code></td>
+          </tr>
+          <tr>
+            <td><code>.claude/teammates.md</code></td>
+            <td><code>cuite/teammates.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>When to use</h4>
+      <p>After a pull that might have changed directory structure, or if symlinks get broken.</p>
+
+      <!-- ═══════════════════════════════════════
+           UPDATE COMMANDS
+           ═══════════════════════════════════════ -->
+
+      <h2 id="cli-pull">cuite pull</h2>
+      <p>Pull framework updates and refresh symlinks.</p>
+
+      <h4>Steps</h4>
+      <ol>
+        <li><code>git subtree pull --squash</code> from cuite remote</li>
+        <li>Refreshes all symlinks</li>
+        <li>Checks settings hooks for drift (quiet mode)</li>
+      </ol>
+
+      <h4>What gets updated</h4>
+      <p>Framework files (hooks, commands, agents, templates). Your files (settings, domains, experts) are never touched.</p>
+
+      <h4>Conflicts</h4>
+      <p>Only happen inside <code>.claude/cuite/</code> if you edited framework files directly. Resolve with <code>git checkout --theirs .claude/cuite/</code>.</p>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-push">cuite push</h2>
+      <p>Push framework changes back to the cuite repo.</p>
+      <p>Only files under <code>.claude/cuite/</code> are pushed. Project-specific files are never included.</p>
+
+      <h4>Use case</h4>
+      <p>You fixed a bug in a hook or improved a template while working in your project. Push it back so other projects get the fix.</p>
+
+      <pre class="terminal"><code data-lang="bash"># Edit, commit, push
+$EDITOR .claude/cuite/hooks/scope-enforcement.sh
+git add .claude/cuite/hooks/scope-enforcement.sh
+git commit -m "fix: scope-enforcement edge case"
+cuite push</code></pre>
+
+      <!-- ═══════════════════════════════════════
+           MAINTENANCE COMMANDS
+           ═══════════════════════════════════════ -->
+
+      <h2 id="cli-settings">cuite settings [-q]</h2>
+      <p>Compare project <code>settings.json</code> hooks against framework template.</p>
+
+      <h4>Interactive mode (default)</h4>
+      <p>Shows diff, lists your permissions, offers to update hooks while preserving permissions.</p>
+
+      <h4>Quiet mode (<code>-q</code>)</h4>
+      <p>Only warns if hooks differ. Used automatically by <code>cuite pull</code>.</p>
+
+      <div class="callout callout-info">
+        <strong>Requires</strong>
+        <code>jq</code> must be installed for this command to work.
+      </div>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-status">cuite status</h2>
+      <p>Show comprehensive framework status:</p>
+      <ul>
+        <li>Remote configuration</li>
+        <li>Subtree location and last commit</li>
+        <li>Symlink integrity (ok count, broken count)</li>
+        <li>Project files (present, missing, or wrongly symlinked)</li>
+        <li>Discovered domains</li>
+        <li>Settings sync status</li>
+      </ul>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-log">cuite log [N]</h2>
+      <p>Show last N (default 20) cuite-related commits.</p>
+
+      <pre class="terminal"><code data-lang="bash">cuite log      # Last 20
+cuite log 5    # Last 5</code></pre>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-diff">cuite diff</h2>
+      <p>Show uncommitted changes in the cuite subtree.</p>
+
+      <pre class="terminal"><code data-lang="bash">cuite diff</code></pre>
+
+      <p>Equivalent to <code>git diff HEAD -- .claude/cuite/</code>.</p>
+
+      <!-- ═══════════════════════════════════════
+           CONFIGURATION
+           ═══════════════════════════════════════ -->
+
+      <h2 id="cli-env">Environment Variables</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CUITE_REMOTE</code></td>
+            <td><code>cuite</code></td>
+            <td>Git remote name for the framework</td>
+          </tr>
+          <tr>
+            <td><code>CUITE_BRANCH</code></td>
+            <td><code>main</code></td>
+            <td>Branch to track</td>
+          </tr>
+          <tr>
+            <td><code>CUITE_REPO</code></td>
+            <td><code>https://github.com/fentas/cuite.git</code></td>
+            <td>Repository URL</td>
+          </tr>
+          <tr>
+            <td><code>CUITE_PREFIX</code></td>
+            <td><code>.claude/cuite</code></td>
+            <td>Subtree path prefix</td>
+          </tr>
+          <tr>
+            <td><code>CLAUDE_DIR</code></td>
+            <td><code>.claude</code></td>
+            <td>Claude Code directory</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ─────────────────────────────────────── -->
+
+      <h2 id="cli-files">File Categories</h2>
+
+      <h4>Framework files (inside <code>.claude/cuite/</code>, updated by pull)</h4>
+      <pre><code data-lang="bash">hooks/*              # Security enforcement, expertise injection
+commands/*           # /do, /do-teams, /improve, /cuite-init, /cuite-sync
+agents/build-agent.md, scout-agent.md, review-agent.md
+agents/templates/*   # Agent templates
+agents/experts/agent-teams-blueprint.md
+bin/cuite            # This CLI
+bin/argsh.min.sh     # Bash framework runtime
+settings.json        # Template (reference for sync)
+CLAUDE.md            # Template
+template.md          # Setup guide
+teammates.md         # Workflow reference</code></pre>
+
+      <h4>Project files (real files in <code>.claude/</code>, never pushed)</h4>
+      <pre><code data-lang="bash">settings.json        # Your WebFetch whitelist + hooks wiring
+settings.local.json  # Per-user (gitignored)
+domain-map.conf      # Your path-to-domain mappings
+domains.md           # Your domain registry
+agents/agent-registry.json
+agents/experts/{your-domains}/
+.cache/              # Session data (gitignored)</code></pre>
+
+      <h4>Symlinks (tracked by git, refreshed by <code>cuite link</code>)</h4>
+      <pre><code data-lang="bash">hooks -> cuite/hooks
+commands -> cuite/commands
+template.md -> cuite/template.md
+teammates.md -> cuite/teammates.md
+agents/templates -> ../cuite/agents/templates
+agents/*.md -> ../cuite/agents/*.md
+agents/experts/agent-teams-blueprint.md -> ../../cuite/...</code></pre>
+
+      <!-- ═══════════════════════════════════════
+           MAKEFILE
+           ═══════════════════════════════════════ -->
+
+      <h2 id="cli-makefile">Makefile Helper</h2>
+      <p>Optional convenience targets:</p>
+
+      <pre><code data-lang="bash">CUITE := .claude/cuite/bin/cuite
+
+cuite-pull:
+	$(CUITE) pull
+
+cuite-init:
+	$(CUITE) init
+
+cuite-status:
+	$(CUITE) status
+
+cuite-settings:
+	$(CUITE) settings</code></pre>
+
+    </main>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="docs.html">Documentation</a>
+        <a href="api.html">API Reference</a>
+        <a href="cli.html">CLI Reference</a>
+        <a href="https://github.com/fentas/cuite">GitHub</a>
+      </div>
+      <p class="footer-copy">CUITE &mdash; The Claude sUITE Framework. Code responsibly. Or don't.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

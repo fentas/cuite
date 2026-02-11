@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - CUITE</title>
+  <meta name="description" content="Complete API reference for the CUITE framework. Commands, hooks, and agent definitions.">
+  <meta property="og:title" content="API Reference - CUITE">
+  <meta property="og:description" content="Complete API reference for the CUITE framework. Commands, hooks, and agent definitions.">
+  <meta property="og:url" content="https://cuite.quest/api.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥴</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="api">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">🥴 CUITE</a>
+      <nav class="site-nav">
+        <a href="docs.html">Docs</a>
+        <a href="api.html" class="active">API</a>
+        <a href="cli.html">CLI</a>
+        <a href="https://github.com/fentas/cuite" class="nav-github" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="20" height="20"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- TOC Toggle (mobile) -->
+  <button class="toc-toggle" aria-label="Table of contents">&#9776;</button>
+
+  <!-- Doc Layout -->
+  <div class="doc-layout">
+
+    <!-- Sidebar -->
+    <aside class="doc-sidebar">
+
+      <div class="toc-section">
+        <div class="toc-label">Commands</div>
+        <a href="#cmd-do" class="toc-link">/do</a>
+        <a href="#cmd-do-teams" class="toc-link">/do-teams</a>
+        <a href="#cmd-improve" class="toc-link">/improve</a>
+        <a href="#cmd-cuite-init" class="toc-link">/cuite-init</a>
+        <a href="#cmd-cuite-sync" class="toc-link">/cuite-sync</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Hooks</div>
+        <a href="#hook-scope" class="toc-link">scope-enforcement.sh</a>
+        <a href="#hook-validate" class="toc-link">validate-intent.sh</a>
+        <a href="#hook-injection" class="toc-link">detect-injection.sh</a>
+        <a href="#hook-learnings" class="toc-link">track-learnings.sh</a>
+        <a href="#hook-expertise" class="toc-link">inject-expertise.sh</a>
+        <a href="#hook-session" class="toc-link">session-context.sh</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Agent Definitions</div>
+        <a href="#agents-core" class="toc-link">Core Agents</a>
+        <a href="#agents-templates" class="toc-link">Template Agents</a>
+        <a href="#agents-registry" class="toc-link">Agent Registry</a>
+      </div>
+
+    </aside>
+
+    <!-- Content -->
+    <main class="doc-content">
+
+      <h1>API Reference</h1>
+      <p>Complete reference for all commands, hooks, and agent definitions.</p>
+
+      <!-- ════════════════════════════════════════════
+           COMMANDS
+           ════════════════════════════════════════════ -->
+
+      <!-- /do -->
+      <h2 id="cmd-do">/do &mdash; Universal Workflow Entry Point</h2>
+      <p>Single command interface for all workflows. Analyzes requirements and orchestrates expert agents through plan-build-improve cycles.</p>
+
+      <pre><code data-lang="yaml">description: Universal entry point - delegates to appropriate workflow
+argument-hint: &lt;requirement&gt;
+allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, TodoWrite</code></pre>
+
+      <h4>Domain Discovery</h4>
+      <ol>
+        <li>Read <code>domains.md</code> &mdash; match keywords and paths</li>
+        <li>Read <code>domain-map.conf</code> &mdash; match file path globs</li>
+        <li>Scan <code>experts/</code> directory &mdash; check expertise.yaml</li>
+        <li>Fallback: generic <code>build-agent</code> or ask user</li>
+      </ol>
+
+      <h4>Patterns</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Trigger</th>
+            <th>Flow</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>A (Implementation)</strong></td>
+            <td>fix, add, create, implement, update</td>
+            <td>plan &rarr; approve &rarr; build &rarr; review &rarr; acknowledge &rarr; improve</td>
+          </tr>
+          <tr>
+            <td><strong>B (Question)</strong></td>
+            <td>how, what, why, explain</td>
+            <td>question-agent &rarr; answer</td>
+          </tr>
+          <tr>
+            <td><strong>C (Simple)</strong></td>
+            <td>format, lint, validate, check</td>
+            <td>build-agent &rarr; result</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Error Handling</h4>
+      <ul>
+        <li><strong>Plan fails</strong> &mdash; report error, exit</li>
+        <li><strong>User declines plan</strong> &mdash; save spec, exit gracefully</li>
+        <li><strong>Build fails</strong> &mdash; preserve spec, report error, skip review</li>
+        <li><strong>Review fails</strong> &mdash; log, skip improve, workflow succeeds</li>
+        <li><strong>Improve fails</strong> &mdash; log, workflow succeeds</li>
+      </ul>
+
+      <h4>Examples</h4>
+      <pre class="terminal"><code data-lang="bash">/do "Add user auth endpoint"     # Pattern A
+/do "How does caching work?"     # Pattern B
+/do "Lint all files"             # Pattern C</code></pre>
+
+      <!-- /do-teams -->
+      <h2 id="cmd-do-teams">/do-teams &mdash; Team-Based Parallel Execution</h2>
+      <p>Spawns a team of specialist agents that work in parallel on multi-domain tasks.</p>
+
+      <pre><code data-lang="yaml">description: Team-based parallel execution with agent teams coordination
+argument-hint: &lt;requirement&gt;
+allowed-tools: Read, Glob, Grep, Task, SendMessage, TeamCreate, TeamDelete, TaskCreate, TaskUpdate, TaskList, AskUserQuestion, TodoWrite</code></pre>
+
+      <div class="callout callout-warn">
+        <strong>Experimental</strong>
+        Requires: <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>
+      </div>
+
+      <h4>Patterns</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Trigger</th>
+            <th>Approach</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Implementation</strong></td>
+            <td>implement, add, create, build, fix</td>
+            <td>Spawns domain specialists with file ownership</td>
+          </tr>
+          <tr>
+            <td><strong>Council</strong></td>
+            <td>analyze, research, review, assess</td>
+            <td>Spawns domain analysts for independent analysis</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Team Lifecycle</h4>
+      <ol>
+        <li><strong>TeamCreate</strong> &mdash; establish team</li>
+        <li><strong>TaskCreate</strong> &mdash; break into tasks with file ownership</li>
+        <li>Spawn teammates (all in one message for parallelism)</li>
+        <li>Monitor and coordinate</li>
+        <li>Shut down specialists</li>
+        <li>Spawn reviewer for cross-validation</li>
+        <li>Acknowledge expertise suggestions</li>
+        <li><strong>TeamDelete</strong> + report</li>
+      </ol>
+
+      <h4>File Ownership Rule</h4>
+      <div class="callout callout-warn">
+        <strong>CRITICAL</strong>
+        No two teammates may modify the same file. Assign paths explicitly in task descriptions.
+      </div>
+
+      <h4>Examples</h4>
+      <pre class="terminal"><code data-lang="bash">/do-teams "Add auth with API and frontend"  # Implementation
+/do-teams "Review security of auth flow"    # Council
+/do-teams "Fix all failing tests"           # Parallel testing</code></pre>
+
+      <!-- /improve -->
+      <h2 id="cmd-improve">/improve &mdash; Expertise Improvement Loop</h2>
+      <p>Reviews recent git changes, extracts learnings, updates expertise.yaml files.</p>
+
+      <pre><code data-lang="yaml">description: Review recent work and update domain expertise
+argument-hint: [domain|all]
+allowed-tools: Read, Glob, Grep, Edit, Bash, Task, TodoWrite</code></pre>
+
+      <h4>Usage</h4>
+      <pre class="terminal"><code data-lang="bash">/improve           # Auto-detect from recent changes
+/improve backend   # Only backend domain
+/improve all       # All domains</code></pre>
+
+      <h4>Steps</h4>
+      <ol>
+        <li>Run <code>git log --oneline -20 --name-only</code></li>
+        <li>Map changed files to domains via <code>domains.md</code> &rarr; <code>domain-map.conf</code> &rarr; <code>session-domains.txt</code> &rarr; <code>experts/</code> scan</li>
+        <li>Spawn <code>{domain}-improve-agent</code> per affected domain (parallel)</li>
+        <li>Report updates</li>
+      </ol>
+
+      <!-- /cuite-init -->
+      <h2 id="cmd-cuite-init">/cuite-init &mdash; Domain Bootstrapper</h2>
+      <p>Scans your project, detects domains, and generates all configuration files.</p>
+
+      <pre><code data-lang="yaml">description: Scan project and bootstrap domain structure
+argument-hint: [--force]
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, TodoWrite</code></pre>
+
+      <h4>Steps</h4>
+      <ol>
+        <li>Detect existing setup (<code>domains.md</code>, <code>experts/</code>, <code>domain-map.conf</code>)</li>
+        <li>Scan project &mdash; language markers, directory structure, README</li>
+        <li>Propose 3-7 domains with name, description, keywords, paths, language, build/test</li>
+        <li>Generate: <code>domains.md</code>, <code>domain-map.conf</code>, <code>experts/{domain}/</code> with <code>tips.md</code> + <code>expertise.yaml</code></li>
+        <li>Update <code>CLAUDE.md</code> project structure table</li>
+      </ol>
+
+      <h4>Detection Patterns</h4>
+      <pre><code data-lang="bash">**/Cargo.toml       # Rust
+**/package.json     # JavaScript/TypeScript
+**/go.mod           # Go
+**/requirements.txt # Python
+**/Dockerfile*      # DevOps
+**/.github/workflows/ # CI/CD
+**/helm/            # Kubernetes</code></pre>
+
+      <!-- /cuite-sync -->
+      <h2 id="cmd-cuite-sync">/cuite-sync &mdash; Framework Sync Checker</h2>
+      <p>Detects drift between the cuite subtree and project configuration.</p>
+
+      <pre><code data-lang="yaml">description: Check and sync cuite framework with project configuration
+argument-hint: [--apply]
+allowed-tools: Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion, TodoWrite</code></pre>
+
+      <h4>Checks</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Check</th>
+            <th>What</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Symlink integrity</strong></td>
+            <td>All expected symlinks exist and point correctly</td>
+          </tr>
+          <tr>
+            <td><strong>Settings hooks</strong></td>
+            <td>Project hooks match framework template</td>
+          </tr>
+          <tr>
+            <td><strong>Upstream changes</strong></td>
+            <td>Commits behind cuite/main</td>
+          </tr>
+          <tr>
+            <td><strong>Domain consistency</strong></td>
+            <td>Cross-reference domains.md vs experts/ vs domain-map.conf</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Issues Detected</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Issue</th>
+            <th>Condition</th>
+            <th>Severity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Ghost domain</strong></td>
+            <td>In domains.md but no experts/ dir</td>
+            <td>HIGH</td>
+          </tr>
+          <tr>
+            <td><strong>Undocumented domain</strong></td>
+            <td>In experts/ but not in domains.md</td>
+            <td>MEDIUM</td>
+          </tr>
+          <tr>
+            <td><strong>Unmapped domain</strong></td>
+            <td>In domains.md but no domain-map.conf entries</td>
+            <td>MEDIUM</td>
+          </tr>
+          <tr>
+            <td><strong>Incomplete domain</strong></td>
+            <td>Missing tips.md or expertise.yaml</td>
+            <td>HIGH</td>
+          </tr>
+          <tr>
+            <td><strong>Orphan mapping</strong></td>
+            <td>domain-map.conf references unknown domain</td>
+            <td>LOW</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ════════════════════════════════════════════
+           HOOKS
+           ════════════════════════════════════════════ -->
+
+      <!-- scope-enforcement.sh -->
+      <h2 id="hook-scope">scope-enforcement.sh</h2>
+      <p><strong>When:</strong> PreToolUse</p>
+      <p><strong>Purpose:</strong> Enforces project boundaries, gates network egress against whitelist, blocks unsafe remote code execution, triggers supply chain verification for package installs.</p>
+      <p>Key behaviors:</p>
+      <ul>
+        <li>Blocks out-of-scope file edits</li>
+        <li>Requires download-first for remote code</li>
+        <li>Prints <code>SUPPLY_CHAIN_CHECK</code> for new packages</li>
+      </ul>
+
+      <!-- validate-intent.sh -->
+      <h2 id="hook-validate">validate-intent.sh</h2>
+      <p><strong>When:</strong> PostToolUse</p>
+      <p><strong>Purpose:</strong> Runs syntax checks on edited shell scripts. Logs edits by domain.</p>
+
+      <!-- detect-injection.sh -->
+      <h2 id="hook-injection">detect-injection.sh</h2>
+      <p><strong>When:</strong> PostToolUse (after WebFetch)</p>
+      <p><strong>Purpose:</strong> Instructs Claude to review fetched web content for prompt injection. Suspicious domains added to <code>blocked-domains.txt</code>.</p>
+
+      <!-- track-learnings.sh -->
+      <h2 id="hook-learnings">track-learnings.sh</h2>
+      <p><strong>When:</strong> PostToolUse</p>
+      <p><strong>Purpose:</strong> Tracks which domains are touched during a session. Writes to <code>.claude/.cache/session-domains.txt</code>. Used by <code>/improve</code> for auto-detection.</p>
+
+      <!-- inject-expertise.sh -->
+      <h2 id="hook-expertise">inject-expertise.sh</h2>
+      <p><strong>When:</strong> SubagentStart</p>
+      <p><strong>Purpose:</strong> Injects domain expertise into spawned agents. Matches agent name to domain keyword, injects <code>tips.md</code> first (compact), then <code>expertise.yaml</code> (deep knowledge).</p>
+
+      <!-- session-context.sh -->
+      <h2 id="hook-session">session-context.sh</h2>
+      <p><strong>When:</strong> SessionStart</p>
+      <p><strong>Purpose:</strong> Reports available domains, recent activity, and pending blacklist entries for user review.</p>
+
+      <!-- ════════════════════════════════════════════
+           AGENT DEFINITIONS
+           ════════════════════════════════════════════ -->
+
+      <!-- Core Agents -->
+      <h2 id="agents-core">Core Agents</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Access</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>build-agent.md</strong></td>
+            <td>Full write access</td>
+            <td>General implementation across all domains. Uses expertise from injected domain context.</td>
+          </tr>
+          <tr>
+            <td><strong>scout-agent.md</strong></td>
+            <td>Read-only</td>
+            <td>Codebase exploration, research, code search. WebSearch auto-allowed.</td>
+          </tr>
+          <tr>
+            <td><strong>review-agent.md</strong></td>
+            <td>Read-only + Task spawning</td>
+            <td>Produces quality assessment, expertise improvement suggestions, new agent suggestions.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Template Agents -->
+      <h2 id="agents-templates">Template Agents</h2>
+      <p>5 templates at <code>.claude/agents/templates/</code>:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Template</th>
+            <th>Access</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>base-agent.md</strong></td>
+            <td>&mdash;</td>
+            <td>Base configuration shared by all domain agents</td>
+          </tr>
+          <tr>
+            <td><strong>plan-agent.md</strong></td>
+            <td>Read-only</td>
+            <td>Creates implementation specs at <code>.cache/specs/{domain}/</code></td>
+          </tr>
+          <tr>
+            <td><strong>build-agent.md</strong></td>
+            <td>Full access</td>
+            <td>Builds from specs, runs tests</td>
+          </tr>
+          <tr>
+            <td><strong>improve-agent.md</strong></td>
+            <td>Read + Edit expertise files</td>
+            <td>Updates <code>tips.md</code> and <code>expertise.yaml</code></td>
+          </tr>
+          <tr>
+            <td><strong>question-agent.md</strong></td>
+            <td>Read-only</td>
+            <td>Uses haiku model for fast answers</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>To create domain agents: copy templates to <code>experts/{domain}/</code>, replace <code>{domain}</code> placeholder.</p>
+
+      <!-- Agent Registry -->
+      <h2 id="agents-registry">Agent Registry</h2>
+      <p>Format at <code>.claude/agents/agent-registry.json</code>:</p>
+      <ul>
+        <li>Lists all available agents</li>
+        <li>Contains <code>_domainAgentTemplate</code> with <code>{domain}</code> placeholders</li>
+        <li>Hooks use this for agent discovery</li>
+        <li>Auto-populated by <code>/cuite-init</code></li>
+      </ul>
+
+    </main>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="docs.html">Documentation</a>
+        <a href="api.html">API Reference</a>
+        <a href="cli.html">CLI Reference</a>
+        <a href="https://github.com/fentas/cuite">GitHub</a>
+      </div>
+      <p class="footer-copy">CUITE &mdash; The Claude sUITE Framework. Code responsibly. Or don't.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

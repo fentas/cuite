@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation - CUITE Framework</title>
+  <meta name="description" content="Complete documentation for the CUITE framework. Setup, architecture, domains, agents, workflows, security, and customization.">
+  <meta property="og:title" content="Documentation - CUITE Framework">
+  <meta property="og:description" content="Complete documentation for the CUITE framework. Setup, architecture, domains, agents, workflows, security, and customization.">
+  <meta property="og:url" content="https://cuite.quest/docs.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CUITE">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥴</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="docs">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">🥴 CUITE</a>
+      <nav class="site-nav">
+        <a href="docs.html" class="active">Docs</a>
+        <a href="api.html">API</a>
+        <a href="cli.html">CLI</a>
+        <a href="https://github.com/fentas/cuite" class="nav-github" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="20" height="20"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Mobile TOC Toggle -->
+  <button class="toc-toggle" aria-label="Table of contents">&#9776;</button>
+
+  <div class="doc-layout">
+
+    <!-- Sidebar -->
+    <aside class="doc-sidebar">
+
+      <div class="toc-section">
+        <div class="toc-label">Getting Started</div>
+        <a href="#prerequisites" class="toc-link">Prerequisites</a>
+        <a href="#installation" class="toc-link">Installation</a>
+        <a href="#first-run" class="toc-link">First Run</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Architecture</div>
+        <a href="#layout" class="toc-link">Hybrid Layout</a>
+        <a href="#file-categories" class="toc-link">File Categories</a>
+        <a href="#why-it-works" class="toc-link">Why This Works</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Domain System</div>
+        <a href="#domains-md" class="toc-link">domains.md</a>
+        <a href="#domain-map" class="toc-link">domain-map.conf</a>
+        <a href="#experts-dir" class="toc-link">experts/ Directory</a>
+        <a href="#domain-discovery" class="toc-link">Domain Discovery</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Agent Types</div>
+        <a href="#core-agents" class="toc-link">Core Agents</a>
+        <a href="#domain-agents" class="toc-link">Domain Agents</a>
+        <a href="#models-access" class="toc-link">Models &amp; Access</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Workflows</div>
+        <a href="#do-workflow" class="toc-link">/do Workflow</a>
+        <a href="#do-teams-workflow" class="toc-link">/do-teams Workflow</a>
+        <a href="#improve-workflow" class="toc-link">/improve Workflow</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Self-Improvement</div>
+        <a href="#flywheel" class="toc-link">The Flywheel</a>
+        <a href="#tips-vs-expertise" class="toc-link">tips.md vs expertise.yaml</a>
+        <a href="#expertise-injection" class="toc-link">Expertise Injection</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Security</div>
+        <a href="#hooks-overview" class="toc-link">Hooks Overview</a>
+        <a href="#supply-chain" class="toc-link">Supply Chain</a>
+        <a href="#network-egress" class="toc-link">Network Egress</a>
+        <a href="#prompt-injection" class="toc-link">Prompt Injection</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Customization</div>
+        <a href="#adding-domain" class="toc-link">Adding a Domain</a>
+        <a href="#writing-expertise" class="toc-link">Writing Expertise</a>
+        <a href="#settings-sync" class="toc-link">Settings Sync</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Updating</div>
+        <a href="#pulling" class="toc-link">Pulling Updates</a>
+        <a href="#pushing" class="toc-link">Pushing Changes</a>
+        <a href="#conflicts" class="toc-link">Conflicts</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Troubleshooting</div>
+        <a href="#troubleshooting" class="toc-link">Common Issues</a>
+        <a href="#faq" class="toc-link">FAQ</a>
+      </div>
+
+      <div class="toc-section">
+        <div class="toc-label">Cost Guide</div>
+        <a href="#cost-guide" class="toc-link">Cost Guide</a>
+      </div>
+
+    </aside>
+
+    <!-- Content -->
+    <main class="doc-content">
+
+      <!-- ════════════════════════════════════════════
+           GETTING STARTED
+           ════════════════════════════════════════════ -->
+
+      <h1>Documentation</h1>
+      <p>Complete guide to setting up and using the CUITE framework.</p>
+
+      <h2 id="prerequisites">Prerequisites</h2>
+      <p>Before installing CUITE, make sure you have the following tools available on your system:</p>
+      <ul>
+        <li><strong>Claude Code CLI</strong> &mdash; the Anthropic command-line interface for Claude. CUITE orchestrates agents through Claude Code, so this is the primary runtime dependency.</li>
+        <li><strong>Git</strong> &mdash; used for subtree management. CUITE lives inside your repository as a git subtree at <code>.claude/cuite/</code>, and all updates are pulled and pushed through git.</li>
+        <li><strong>A project repository</strong> &mdash; CUITE attaches to an existing git repository. It does not create one for you. Initialize your repo first, then install CUITE into it.</li>
+      </ul>
+
+      <h2 id="installation">Installation</h2>
+      <p>CUITE installs itself as a git subtree inside your project. The installer clones the framework, runs the <code>init</code> command, and cleans up after itself.</p>
+      <pre class="terminal"><code data-lang="bash">git clone https://github.com/fentas/cuite.git /tmp/cuite
+/tmp/cuite/bin/cuite init
+rm -rf /tmp/cuite</code></pre>
+
+      <p>Here is what the <code>init</code> command does under the hood:</p>
+      <ol>
+        <li><strong>Adds a git remote</strong> named <code>cuite</code> pointing to the CUITE repository.</li>
+        <li><strong>Creates the subtree</strong> at <code>.claude/cuite/</code> using <code>git subtree add</code>.</li>
+        <li><strong>Sets up symlinks</strong> so Claude Code can find hooks, commands, and agent definitions in the locations it expects (directly under <code>.claude/</code>).</li>
+        <li><strong>Copies starter files</strong> such as <code>CLAUDE.md</code>, <code>settings.json</code>, and template domain files into your project root and <code>.claude/</code> directory.</li>
+      </ol>
+
+      <div class="callout callout-info">
+        <strong>Note</strong>
+        The installer never overwrites existing files. If you already have a <code>CLAUDE.md</code> or <code>settings.json</code>, CUITE will skip those files and let you merge manually.
+      </div>
+
+      <h2 id="first-run">First Run</h2>
+      <p>After installation, open Claude Code in your project and run the initialization command:</p>
+      <pre class="terminal"><code data-lang="bash">/cuite-init</code></pre>
+      <p>This command triggers a full project scan. Here is what happens:</p>
+      <ol>
+        <li><strong>Language detection</strong> &mdash; scans file extensions, package manifests, and build files to identify the languages and frameworks used in your project.</li>
+        <li><strong>Sub-project discovery</strong> &mdash; looks for monorepo patterns, separate build roots, and isolated dependency trees.</li>
+        <li><strong>Domain proposal</strong> &mdash; based on the scan results, CUITE proposes a set of domains (e.g., <code>backend</code>, <code>frontend</code>, <code>infra</code>) and presents them for your approval.</li>
+        <li><strong>Configuration generation</strong> &mdash; on approval, generates <code>domains.md</code>, <code>domain-map.conf</code>, and starter expertise files for each domain under <code>.claude/agents/experts/</code>.</li>
+      </ol>
+
+      <div class="callout callout-tip">
+        <strong>Tip</strong>
+        You can re-run <code>/cuite-init</code> at any time. It will detect new sub-projects and propose additional domains without overwriting your existing configuration.
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           ARCHITECTURE
+           ════════════════════════════════════════════ -->
+
+      <h2 id="layout">Hybrid Layout</h2>
+      <p>CUITE uses a hybrid architecture combining a git subtree for the framework itself with symlinks that bridge into the locations Claude Code expects. Your project-specific files live outside the subtree and are never touched by framework updates.</p>
+      <pre><code data-lang="shell">project/
+  CLAUDE.md                       # customized from template
+  .claude/
+    cuite/                        # git subtree (framework)
+    hooks -&gt; cuite/hooks          # symlink
+    commands -&gt; cuite/commands    # symlink
+    agents/
+      *.md -&gt; cuite/agents/*.md   # symlinks
+      templates -&gt; cuite          # symlink
+      experts/
+        your-domain/              # YOUR files (never pushed)
+    settings.json                 # YOUR file
+    domains.md                    # YOUR file
+    domain-map.conf               # YOUR file</code></pre>
+
+      <p>The key insight is separation of concerns: the framework code travels via subtree, your domain expertise stays local, and symlinks make everything discoverable by Claude Code without any path hacks.</p>
+
+      <h2 id="file-categories">File Categories</h2>
+      <p>Every file in the CUITE installation falls into one of three categories:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Updated By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Framework</strong></td>
+            <td>Inside <code>.claude/cuite/</code></td>
+            <td>Updated by <code>cuite pull</code></td>
+          </tr>
+          <tr>
+            <td><strong>Project-specific</strong></td>
+            <td><code>.claude/</code> (real files)</td>
+            <td>Updated by you</td>
+          </tr>
+          <tr>
+            <td><strong>Symlinks</strong></td>
+            <td><code>.claude/</code> &rarr; <code>.claude/cuite/</code></td>
+            <td>Refreshed by <code>cuite link</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>This three-tier approach means you can pull framework updates without worrying about your settings, domains, or expertise files being overwritten. The subtree boundary acts as a clean firewall between framework code and project-specific configuration.</p>
+
+      <h2 id="why-it-works">Why This Works</h2>
+      <p>Each architectural concern maps to a specific solution:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Concern</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Push only framework code</td>
+            <td>Subtree prefix isolates <code>.claude/cuite/</code> from everything else</td>
+          </tr>
+          <tr>
+            <td>Claude Code finds hooks</td>
+            <td>Symlinks bridge <code>.claude/hooks</code> &rarr; <code>.claude/cuite/hooks</code></td>
+          </tr>
+          <tr>
+            <td>Your settings stay yours</td>
+            <td>Real files live outside the subtree at <code>.claude/settings.json</code></td>
+          </tr>
+          <tr>
+            <td>Domain experts are yours</td>
+            <td>Real directories under <code>.claude/agents/experts/</code></td>
+          </tr>
+          <tr>
+            <td>Hooks resolve paths correctly</td>
+            <td>All hook scripts use <code>$PWD</code> for path resolution</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ════════════════════════════════════════════
+           DOMAIN SYSTEM
+           ════════════════════════════════════════════ -->
+
+      <h2 id="domains-md">domains.md</h2>
+      <p>The primary domain registry lives at <code>.claude/domains.md</code>. This file is the single source of truth for what domains exist in your project, what they contain, and how to work with them. Every <code>## heading</code> in this file defines one domain.</p>
+
+      <p>Commands like <code>/do</code>, <code>/do-teams</code>, and <code>/improve</code> read this file first when deciding which domain to target. The file uses a structured markdown format:</p>
+
+      <pre><code data-lang="yaml">## backend
+- **Description**: Express API server
+- **Keywords**: API, endpoint, route, middleware
+- **Paths**: `src/api/`, `src/server/`
+- **Language**: TypeScript
+- **Build**: `npm run build`
+- **Test**: `npm test`</code></pre>
+
+      <p>Each field serves a specific purpose:</p>
+      <ul>
+        <li><strong>Description</strong> &mdash; a one-line summary that helps agents understand the domain's role in the project.</li>
+        <li><strong>Keywords</strong> &mdash; terms used for fuzzy matching when <code>/do</code> tries to route a task to the right domain. If your task mentions "endpoint", it matches "backend" through this keyword list.</li>
+        <li><strong>Paths</strong> &mdash; directories and file globs that belong to this domain. Used for scope enforcement and file ownership during parallel team work.</li>
+        <li><strong>Language</strong> &mdash; the primary language, which helps agents select the right linters, test runners, and build tools.</li>
+        <li><strong>Build / Test</strong> &mdash; the exact commands to build and test this domain. Agents use these directly; no guessing.</li>
+      </ul>
+
+      <h2 id="domain-map">domain-map.conf</h2>
+      <p>The domain map at <code>.claude/domain-map.conf</code> provides glob-to-domain mappings used by hooks for fast path-based domain resolution. This is the second lookup method after <code>domains.md</code> keywords.</p>
+
+      <p>Format: one mapping per line, <code>pattern = domain</code>.</p>
+      <pre><code data-lang="shell">src/api/* = backend
+src/ui/* = frontend
+.github/* = devops
+infra/* = infrastructure
+docs/* = documentation
+*.proto = backend</code></pre>
+
+      <p>Hooks use this file to determine which domain a file belongs to without parsing the full <code>domains.md</code>. This makes scope enforcement fast, even in large monorepos with hundreds of files.</p>
+
+      <div class="callout callout-info">
+        <strong>Note</strong>
+        Patterns use simple glob syntax. A single <code>*</code> matches within one directory level. To match deeply nested files, use patterns like <code>src/api/**</code>.
+      </div>
+
+      <h2 id="experts-dir">experts/ Directory</h2>
+      <p>Each domain gets its own directory at <code>.claude/agents/experts/{domain}/</code>. This directory contains all the knowledge and agent definitions specific to that domain.</p>
+
+      <p>A fully populated domain directory contains:</p>
+      <ul>
+        <li><strong>tips.md</strong> &mdash; quick operational facts. Short, dense, injected first into every agent spawn. Think "cheat sheet" rather than "documentation".</li>
+        <li><strong>expertise.yaml</strong> &mdash; deep domain knowledge in structured YAML format. Contains patterns, anti-patterns, critical paths, known issues, and architectural decisions.</li>
+        <li><strong>{domain}-plan-agent.md</strong> &mdash; agent definition for the planning phase.</li>
+        <li><strong>{domain}-build-agent.md</strong> &mdash; agent definition for the implementation phase.</li>
+        <li><strong>{domain}-improve-agent.md</strong> &mdash; agent definition for the expertise improvement phase.</li>
+        <li><strong>{domain}-question-agent.md</strong> &mdash; agent definition for answering questions about the domain.</li>
+      </ul>
+
+      <p>These files are never pushed to the CUITE framework repository. They are your project-specific knowledge and stay entirely within your project.</p>
+
+      <h2 id="domain-discovery">Domain Discovery</h2>
+      <p>When a command needs to determine which domain to target, CUITE uses a 4-step fallback chain:</p>
+      <ol>
+        <li><strong>Read <code>domains.md</code></strong> &mdash; match the task description against domain keywords and paths. This is the primary and most reliable method.</li>
+        <li><strong>Read <code>domain-map.conf</code></strong> &mdash; match file path globs when the task references specific files. Fast and deterministic.</li>
+        <li><strong>Scan <code>experts/</code> directory</strong> &mdash; check which domain directories exist and inspect their <code>expertise.yaml</code> for additional matching signals.</li>
+        <li><strong>Fallback</strong> &mdash; if no domain matches, use the generic <code>build-agent</code> for implementation tasks or ask the user to clarify.</li>
+      </ol>
+
+      <p>This layered approach means CUITE can always find the right domain, even if your configuration is incomplete. The fallback chain degrades gracefully rather than failing.</p>
+
+      <!-- ════════════════════════════════════════════
+           AGENT TYPES
+           ════════════════════════════════════════════ -->
+
+      <h2 id="core-agents">Core Agents</h2>
+      <p>CUITE ships with three core agents that handle cross-domain work. These are not tied to any specific domain and can operate on any part of the codebase.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Access</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>build-agent</strong></td>
+            <td>Full (Read/Write/Edit/Bash)</td>
+            <td>General-purpose implementation. Used as the fallback when no domain-specific agent matches.</td>
+          </tr>
+          <tr>
+            <td><strong>scout-agent</strong></td>
+            <td>Read-only</td>
+            <td>Codebase exploration and research. Reads files, searches patterns, maps dependencies. Cannot modify anything.</td>
+          </tr>
+          <tr>
+            <td><strong>review-agent</strong></td>
+            <td>Read-only + Task</td>
+            <td>Code review and quality gate. Analyzes implementations, checks for issues, and produces structured review reports.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Core agents are defined in <code>.claude/agents/</code> as symlinks to their framework definitions in <code>.claude/cuite/agents/</code>. They receive the same expertise injection as domain agents when the hook can determine which domain is relevant.</p>
+
+      <h2 id="domain-agents">Domain Agents</h2>
+      <p>For each domain, CUITE creates four specialized agents. These agents are scoped to a single domain and receive that domain's expertise on every spawn.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Role</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>{domain}-plan-agent</strong></td>
+            <td>Planner</td>
+            <td>Read-only access. Analyzes the task, reads relevant code, and produces a detailed implementation spec. Does not write any code.</td>
+          </tr>
+          <tr>
+            <td><strong>{domain}-build-agent</strong></td>
+            <td>Builder</td>
+            <td>Full access. Takes the spec from the plan agent and implements it. Writes code, runs builds, executes tests.</td>
+          </tr>
+          <tr>
+            <td><strong>{domain}-improve-agent</strong></td>
+            <td>Improver</td>
+            <td>Read + Edit on expertise files only. Reviews what was built and learned, then updates <code>tips.md</code> and <code>expertise.yaml</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>{domain}-question-agent</strong></td>
+            <td>Answerer</td>
+            <td>Read-only access. Answers questions about the domain using codebase context and expertise files. Fast and cheap.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Agent definitions live at <code>.claude/agents/experts/{domain}/</code> and are generated from templates during <code>/cuite-init</code>. You can customize them freely &mdash; they are your project files.</p>
+
+      <h2 id="models-access">Models &amp; Access</h2>
+      <p>Different agent types use different models based on their complexity requirements and cost profile:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Agent Type</th>
+            <th>Model</th>
+            <th>Access Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>plan-agent</td>
+            <td>sonnet</td>
+            <td>Read-only</td>
+          </tr>
+          <tr>
+            <td>build-agent</td>
+            <td>sonnet</td>
+            <td>Full (Read/Write/Edit/Bash)</td>
+          </tr>
+          <tr>
+            <td>improve-agent</td>
+            <td>sonnet</td>
+            <td>Read + Edit expertise files</td>
+          </tr>
+          <tr>
+            <td>question-agent</td>
+            <td>haiku (fast, cheap)</td>
+            <td>Read-only</td>
+          </tr>
+          <tr>
+            <td>Team leads</td>
+            <td>opus (when needed)</td>
+            <td>Can use opus for complex orchestration</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The model selection is intentional: sonnet provides the best balance of capability and cost for most work, haiku keeps question-answering cheap and fast, and opus is reserved for complex multi-domain orchestration where the additional reasoning capability justifies the cost.</p>
+
+      <!-- ════════════════════════════════════════════
+           WORKFLOWS
+           ════════════════════════════════════════════ -->
+
+      <h2 id="do-workflow">/do &mdash; Single Domain</h2>
+      <p>The <code>/do</code> command is the primary workflow for single-domain tasks. It routes your task to the appropriate domain and orchestrates a plan-build-review-improve cycle.</p>
+
+      <p><code>/do</code> operates in three patterns depending on the nature of the task:</p>
+
+      <h3>Pattern A: Implementation</h3>
+      <p>For tasks that require writing or modifying code. This is the full cycle.</p>
+
+      <div class="flow-diagram"><span class="hl">plan-agent</span> &rarr; spec
+     &darr;
+User: "Proceed?" &rarr; [Yes] / [No]
+     &darr;
+<span class="hl">build-agent</span> &rarr; implementation
+     &darr;
+<span class="hl">review-agent</span> &rarr; quality report + suggestions
+     &darr;
+User: "Apply suggestions?" &rarr; [Yes] / [Skip]
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise</div>
+
+      <p>The user has two decision points: approving the plan before implementation begins, and acknowledging the review suggestions before expertise updates. This keeps you in control while the agents do the heavy lifting.</p>
+
+      <h3>Pattern B: Question</h3>
+      <p>For tasks that are questions about the codebase rather than implementation requests. The <code>question-agent</code> answers directly using domain expertise and codebase context. No build or review cycle is needed.</p>
+
+      <h3>Pattern C: Simple</h3>
+      <p>For tasks like running linters, formatting code, or validating configurations. The <code>build-agent</code> executes the task directly without a plan or review phase. These are one-shot operations.</p>
+
+      <h2 id="do-teams-workflow">/do-teams &mdash; Parallel Teams</h2>
+      <p>The <code>/do-teams</code> command spawns multiple domain specialists to work in parallel. This is the workflow for tasks that span multiple domains or require coordinated changes across the codebase.</p>
+
+      <div class="callout callout-warn">
+        <strong>Experimental</strong>
+        Agent teams require the <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code> environment variable. This is a Claude Code experimental feature.
+      </div>
+
+      <p><code>/do-teams</code> operates in two patterns:</p>
+
+      <h3>Implementation</h3>
+      <p>Spawns domain specialists who each own a set of files, work in parallel, and coordinate through a shared task list.</p>
+
+      <div class="flow-diagram"><span class="hl">TeamCreate</span> &rarr; initialize team workspace
+     &darr;
+<span class="hl">TaskCreate</span> &rarr; break work into domain-scoped tasks
+     &darr;
+<span class="hl">Spawn specialists</span> &rarr; one per domain
+     &darr;
+[domain-a-build]  [domain-b-build]  [domain-c-build]
+     &darr;                 &darr;                 &darr;
+          &darr;&darr;&darr; work in parallel &darr;&darr;&darr;
+     &darr;
+<span class="hl">Shut down specialists</span>
+     &darr;
+<span class="hl">review-agent</span> &rarr; cross-domain quality check
+     &darr;
+<span class="hl">improve-agent</span> &rarr; updates expertise per domain
+     &darr;
+<span class="hl">TeamDelete</span> &rarr; clean up team workspace</div>
+
+      <p>File ownership is enforced during parallel work: each specialist can only modify files within their domain's paths. This prevents merge conflicts and ensures clean boundaries.</p>
+
+      <h3>Council</h3>
+      <p>Spawns domain analysts for independent review. Each analyst examines the task from their domain's perspective and provides an assessment. No code is written &mdash; the output is a multi-perspective analysis.</p>
+
+      <h2 id="improve-workflow">/improve &mdash; Maintenance</h2>
+      <p>The <code>/improve</code> command is a standalone expertise update workflow. It reviews recent work and updates domain knowledge without building anything new.</p>
+
+      <p>When you run <code>/improve</code>:</p>
+      <ol>
+        <li>Reviews <code>git log</code> for recent changes.</li>
+        <li>Maps changed files to domains using <code>domain-map.conf</code>.</li>
+        <li>Spawns an <code>improve-agent</code> for each affected domain.</li>
+        <li>Each improve-agent reviews the changes and updates <code>tips.md</code> and <code>expertise.yaml</code> with any new knowledge.</li>
+      </ol>
+
+      <p>You can also target a specific domain: <code>/improve backend</code> will only update the backend domain's expertise.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip</strong>
+        Run <code>/improve</code> after significant manual changes or after merging a large PR. It ensures your domain expertise stays current with the actual state of the code.
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           SELF-IMPROVEMENT
+           ════════════════════════════════════════════ -->
+
+      <h2 id="flywheel">The Flywheel</h2>
+      <p>CUITE is designed around a self-improvement loop. Every build cycle feeds back into the expertise system, making subsequent agent spawns smarter and more effective.</p>
+
+      <div class="flow-diagram">You work on code
+  &rarr; hooks track touched domains
+  &rarr; <span class="hl">/do</span> runs review-agent after builds
+  &rarr; review suggests expertise improvements
+  &rarr; user acknowledges
+  &rarr; <span class="hl">improve-agent</span> updates expertise
+  &rarr; next agent spawn gets better knowledge
+  &rarr; agents make better decisions
+  &rarr; repeat</div>
+
+      <p>The flywheel accelerates over time. Early sessions produce generic expertise. After a few cycles, your agents know your project's specific patterns, conventions, pitfalls, and non-obvious behaviors. The expertise compounds with each iteration.</p>
+
+      <h2 id="tips-vs-expertise">tips.md vs expertise.yaml</h2>
+      <p>CUITE maintains two levels of domain knowledge. Each serves a different purpose in the injection pipeline:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Aspect</th>
+            <th>tips.md</th>
+            <th>expertise.yaml</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Format</strong></td>
+            <td>Markdown bullet points</td>
+            <td>Structured YAML</td>
+          </tr>
+          <tr>
+            <td><strong>Injection order</strong></td>
+            <td>Injected first (fast context)</td>
+            <td>Injected second (full context)</td>
+          </tr>
+          <tr>
+            <td><strong>Size</strong></td>
+            <td>Compact, typically under 50 lines</td>
+            <td>Comprehensive, can be hundreds of lines</td>
+          </tr>
+          <tr>
+            <td><strong>Content</strong></td>
+            <td>Operational facts, gotchas, exact commands</td>
+            <td>Patterns, anti-patterns, architectural decisions, critical paths</td>
+          </tr>
+          <tr>
+            <td><strong>Update frequency</strong></td>
+            <td>Updated frequently as new facts are discovered</td>
+            <td>Updated after significant changes or reviews</td>
+          </tr>
+          <tr>
+            <td><strong>Analogy</strong></td>
+            <td>Sticky notes on your monitor</td>
+            <td>The team wiki page</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The two-tier approach ensures agents get the most critical information first (tips.md loads fast and fits in early context), with deep knowledge available when needed (expertise.yaml provides full context for complex decisions).</p>
+
+      <h2 id="expertise-injection">Expertise Injection</h2>
+      <p>The <code>inject-expertise.sh</code> hook runs on every <code>SubagentStart</code> event. When Claude Code spawns a sub-agent, this hook intercepts the spawn and enriches it with domain knowledge.</p>
+
+      <p>The injection process:</p>
+      <ol>
+        <li><strong>Match agent to domain</strong> &mdash; the hook extracts the domain name from the agent name (e.g., <code>backend-build-agent</code> &rarr; <code>backend</code>).</li>
+        <li><strong>Load tips.md</strong> &mdash; injected first as fast context. These are the operational facts the agent needs immediately.</li>
+        <li><strong>Load expertise.yaml</strong> &mdash; injected second as comprehensive context. Contains patterns, anti-patterns, and deep domain knowledge.</li>
+        <li><strong>Inject into agent prompt</strong> &mdash; the knowledge is prepended to the agent's system instructions so it is available from the first token.</li>
+      </ol>
+
+      <p>This happens transparently. You do not need to manually pass context to agents. The hook system handles it automatically, and agents arrive at their tasks already knowing your project's conventions and gotchas.</p>
+
+      <!-- ════════════════════════════════════════════
+           SECURITY
+           ════════════════════════════════════════════ -->
+
+      <h2 id="hooks-overview">Hooks Overview</h2>
+      <p>CUITE ships with six hooks that enforce security boundaries, track domain activity, and inject expertise. Hooks run automatically on specific Claude Code lifecycle events.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Hook</th>
+            <th>When</th>
+            <th>What It Does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>scope-enforcement.sh</code></td>
+            <td>PreToolUse</td>
+            <td>Enforces project boundaries, gates network egress against domain whitelist, triggers supply chain verification for new packages.</td>
+          </tr>
+          <tr>
+            <td><code>validate-intent.sh</code></td>
+            <td>PostToolUse</td>
+            <td>Runs syntax checks on edited shell scripts. Catches broken shell before it gets committed.</td>
+          </tr>
+          <tr>
+            <td><code>detect-injection.sh</code></td>
+            <td>PostToolUse</td>
+            <td>Scans content fetched via WebFetch for prompt injection patterns. Flags suspicious content and blocks malicious domains.</td>
+          </tr>
+          <tr>
+            <td><code>track-learnings.sh</code></td>
+            <td>PostToolUse</td>
+            <td>Records which domains were touched during the session. Used by <code>/improve</code> to know which domains need expertise updates.</td>
+          </tr>
+          <tr>
+            <td><code>inject-expertise.sh</code></td>
+            <td>SubagentStart</td>
+            <td>Matches spawned agent to domain and injects <code>tips.md</code> and <code>expertise.yaml</code> into the agent's context.</td>
+          </tr>
+          <tr>
+            <td><code>session-context.sh</code></td>
+            <td>SessionStart</td>
+            <td>Reports active domains, recent activity, and blacklist status at the beginning of each session.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>All hooks are shell scripts located at <code>.claude/cuite/hooks/</code> and symlinked to <code>.claude/hooks/</code>. They are registered in <code>.claude/settings.json</code>.</p>
+
+      <h2 id="supply-chain">Supply Chain Verification</h2>
+      <p>When CUITE hooks detect that an agent is installing a new package (via npm, pip, cargo, go get, or similar), the <code>scope-enforcement.sh</code> hook prints a <code>SUPPLY_CHAIN_CHECK</code> marker.</p>
+
+      <p>This marker instructs Claude to:</p>
+      <ol>
+        <li><strong>Pause the installation</strong> &mdash; do not proceed until verification is complete.</li>
+        <li><strong>Fetch registry metadata</strong> &mdash; use WebFetch to check the package registry (npm, PyPI, crates.io, etc.) and confirm the package exists, the version is valid, and the publisher is legitimate.</li>
+        <li><strong>Verify the package</strong> &mdash; check download counts, publication date, maintainer identity, and look for signs of typosquatting or malicious packages.</li>
+        <li><strong>Proceed or block</strong> &mdash; only install the package after verification passes. If anything looks suspicious, block the install and notify the user.</li>
+      </ol>
+
+      <div class="callout callout-warn">
+        <strong>Important</strong>
+        Never guess version numbers. Hallucinated versions can resolve to malicious packages published by attackers who squat on plausible version strings. Always verify against the registry.
+      </div>
+
+      <h2 id="network-egress">Network Egress</h2>
+      <p>All network calls made by agents (via WebFetch or Bash commands that access the network) are gated against a domain whitelist defined in <code>.claude/settings.json</code>.</p>
+
+      <p>The whitelist controls which external domains agents can access. Requests to domains not on the whitelist are blocked by the <code>scope-enforcement.sh</code> hook. This prevents agents from:</p>
+      <ul>
+        <li>Exfiltrating code or secrets to unknown endpoints.</li>
+        <li>Fetching content from untrusted sources.</li>
+        <li>Making unintended API calls to external services.</li>
+      </ul>
+
+      <p>To add a domain to the whitelist, update the relevant section in <code>.claude/settings.json</code>. The whitelist is project-specific and never overwritten by framework updates.</p>
+
+      <h2 id="prompt-injection">Prompt Injection Detection</h2>
+      <p>After every WebFetch operation, the <code>detect-injection.sh</code> hook instructs Claude to review the fetched content for prompt injection red flags. This includes:</p>
+      <ul>
+        <li>Instructions that attempt to override Claude's system prompt or behavior.</li>
+        <li>Content that tries to make Claude ignore safety guidelines.</li>
+        <li>Hidden text or encoded payloads designed to manipulate agent behavior.</li>
+        <li>Social engineering patterns ("ignore previous instructions", "you are now...", etc.).</li>
+      </ul>
+
+      <p>When suspicious content is detected:</p>
+      <ol>
+        <li>The domain is added to <code>.claude/.cache/blocked-domains.txt</code>.</li>
+        <li>The user is notified about the suspicious content.</li>
+        <li>Future requests to that domain are blocked automatically.</li>
+      </ol>
+
+      <p>This defense layer is especially important when agents fetch documentation, READMEs, or API responses from the internet, where an attacker could embed injection payloads.</p>
+
+      <!-- ════════════════════════════════════════════
+           CUSTOMIZATION
+           ════════════════════════════════════════════ -->
+
+      <h2 id="adding-domain">Adding a New Domain</h2>
+      <p>You can add a new domain to your CUITE installation either manually or by re-running <code>/cuite-init</code>.</p>
+
+      <h3>Manual Setup</h3>
+      <ol>
+        <li><strong>Create the directory</strong>:
+          <pre class="terminal"><code data-lang="bash">mkdir -p .claude/agents/experts/my-domain/</code></pre>
+        </li>
+        <li><strong>Create <code>expertise.yaml</code></strong> with your domain knowledge. Start with the most important patterns and anti-patterns.</li>
+        <li><strong>Create <code>tips.md</code></strong> with quick operational facts &mdash; exact commands, environment variables, gotchas.</li>
+        <li><strong>Copy the 4 agent templates</strong> from <code>.claude/agents/templates/</code> and rename them with your domain prefix:
+          <pre class="terminal"><code data-lang="bash">cp .claude/agents/templates/*-plan-agent.md .claude/agents/experts/my-domain/my-domain-plan-agent.md
+cp .claude/agents/templates/*-build-agent.md .claude/agents/experts/my-domain/my-domain-build-agent.md
+cp .claude/agents/templates/*-improve-agent.md .claude/agents/experts/my-domain/my-domain-improve-agent.md
+cp .claude/agents/templates/*-question-agent.md .claude/agents/experts/my-domain/my-domain-question-agent.md</code></pre>
+        </li>
+        <li><strong>Add to <code>domains.md</code></strong> with a new <code>## my-domain</code> section containing description, keywords, paths, language, build, and test commands.</li>
+        <li><strong>Add path mappings</strong> to <code>domain-map.conf</code> so hooks can resolve files to your new domain.</li>
+      </ol>
+
+      <h3>Automatic Setup</h3>
+      <p>Run <code>/cuite-init</code> again. It will detect new sub-projects and propose additional domains. Existing domains are preserved.</p>
+
+      <h2 id="writing-expertise">Writing Good Expertise</h2>
+      <p>The quality of your expertise files directly determines how effective your agents are. Prioritize information that is hard-won, non-obvious, or specific to your project.</p>
+
+      <h3>What to include</h3>
+      <ul>
+        <li><strong>Hard-won lessons</strong> &mdash; things that cost you debugging time.</li>
+        <li><strong>Exact commands</strong> &mdash; not "run the tests" but <code>npm test -- --coverage --watchAll=false</code>.</li>
+        <li><strong>Non-obvious behavior</strong> &mdash; silent failures, implicit dependencies, order-sensitive operations.</li>
+        <li><strong>Convention decisions</strong> &mdash; why you chose X over Y, so agents do not second-guess.</li>
+        <li><strong>Anti-patterns</strong> &mdash; things that look right but break in your specific context.</li>
+      </ul>
+
+      <h3>Bad example</h3>
+      <pre><code data-lang="yaml">testing: "Make sure to test your code"</code></pre>
+      <p>This tells the agent nothing it does not already know. It is noise in the context window.</p>
+
+      <h3>Good example</h3>
+      <pre><code data-lang="yaml">critical_patterns:
+  async_error_handling: |
+    CRITICAL: Express error middleware requires 4 parameters.
+    Missing any parameter makes Express skip the handler silently.
+    Always use: (err, req, res, next) => { ... }
+
+    The order matters. If you write (req, res, next, err),
+    Express treats it as a regular middleware and errors
+    will fall through to the default handler.</code></pre>
+
+      <p>This is specific, actionable, and describes a silent failure mode that would waste debugging time. This is the kind of knowledge that makes agents dramatically more effective.</p>
+
+      <h2 id="settings-sync">Settings Sync</h2>
+      <p>The <code>cuite settings</code> command compares your project's hook configuration in <code>.claude/settings.json</code> against the framework's template. It ensures all hooks are wired correctly while preserving your custom permissions and whitelist settings.</p>
+
+      <p>Run this after pulling framework updates to ensure new hooks are registered:</p>
+      <pre class="terminal"><code data-lang="bash">cuite settings</code></pre>
+
+      <p>The command will report which hooks are missing, which are outdated, and apply updates with your confirmation. Your permissions, whitelist, and other custom settings are never modified.</p>
+
+      <!-- ════════════════════════════════════════════
+           UPDATING
+           ════════════════════════════════════════════ -->
+
+      <h2 id="pulling">Pulling Updates</h2>
+      <p>To pull the latest CUITE framework updates into your project:</p>
+      <pre class="terminal"><code data-lang="bash">cuite pull</code></pre>
+
+      <p>This command:</p>
+      <ol>
+        <li>Runs <code>git subtree pull</code> to update <code>.claude/cuite/</code> with the latest framework code.</li>
+        <li>Refreshes symlinks to ensure they point to the updated files.</li>
+        <li>Checks settings for any new hooks that need to be registered.</li>
+      </ol>
+
+      <p>Your files are never touched. <code>settings.json</code>, <code>domains.md</code>, <code>domain-map.conf</code>, and everything under <code>experts/</code> remain exactly as you left them.</p>
+
+      <h2 id="pushing">Pushing Changes</h2>
+      <p>If you have forked CUITE and want to contribute improvements back to the framework:</p>
+      <pre class="terminal"><code data-lang="bash">cuite push</code></pre>
+
+      <p>This command uses <code>git subtree push</code> to extract only the <code>.claude/cuite/</code> directory and push it to the remote. Your project-specific files (settings, domains, expertise) are excluded by the subtree prefix.</p>
+
+      <div class="callout callout-info">
+        <strong>Note</strong>
+        Fork the CUITE repository first if you want to push improvements. The push command sends changes to the <code>cuite</code> remote, which should point to your fork.
+      </div>
+
+      <h2 id="conflicts">Conflicts</h2>
+      <p>Merge conflicts during a <code>cuite pull</code> can only happen inside <code>.claude/cuite/</code>. Your project-specific files are outside the subtree and cannot conflict.</p>
+
+      <p>If you encounter conflicts, the simplest resolution is to accept the upstream version:</p>
+      <pre class="terminal"><code data-lang="bash">git checkout --theirs .claude/cuite/
+git add .claude/cuite/
+git commit -m "merge cuite updates"</code></pre>
+
+      <p>This is safe because <code>.claude/cuite/</code> contains only framework code. If you have made local modifications to framework files, review the conflicts manually and merge as appropriate.</p>
+
+      <!-- ════════════════════════════════════════════
+           TROUBLESHOOTING
+           ════════════════════════════════════════════ -->
+
+      <h2 id="troubleshooting">Common Issues</h2>
+
+      <h4>"Agent teams not available"</h4>
+      <p>Agent teams are an experimental Claude Code feature. Set the environment variable before launching Claude Code:</p>
+      <pre class="terminal"><code data-lang="bash">export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code></pre>
+
+      <h4>"Hooks not firing"</h4>
+      <p>Check that the hooks section in <code>.claude/settings.json</code> is properly configured. Each hook needs a matching entry with the correct event type (<code>PreToolUse</code>, <code>PostToolUse</code>, <code>SubagentStart</code>, or <code>SessionStart</code>). Run <code>cuite settings</code> to diagnose and fix hook wiring.</p>
+
+      <h4>"Agent doesn't know my domain"</h4>
+      <p>The agent name must contain the domain keyword for expertise injection to work. If your domain is <code>backend</code>, the agent must be named something like <code>backend-build-agent</code>. Check the agent filenames under <code>.claude/agents/experts/{domain}/</code>.</p>
+
+      <h4>"Expertise not injected"</h4>
+      <p>Verify that <code>expertise.yaml</code> exists in the domain's expert directory. The <code>inject-expertise.sh</code> hook looks for this file by path. Also check that the <code>inject-expertise.sh</code> hook is registered in <code>settings.json</code> under the <code>SubagentStart</code> event.</p>
+
+      <h4>"/do picks wrong domain"</h4>
+      <p>Add more keywords to the domain's entry in <code>domains.md</code>. The keyword matching is the first step in domain discovery. If your task description uses terms that are not in the keyword list, <code>/do</code> may route to the wrong domain or fall back to the generic agent.</p>
+
+      <h4>"/improve doesn't find changes"</h4>
+      <p>The <code>/improve</code> command reads <code>git log</code> to find recent changes. If your changes are uncommitted, <code>/improve</code> will not see them. Commit first, then run <code>/improve</code>.</p>
+
+      <h2 id="faq">FAQ</h2>
+
+      <h4>Will subtree pull overwrite my domains?</h4>
+      <p>No. The subtree pull only updates files inside <code>.claude/cuite/</code>. Your <code>domains.md</code>, <code>domain-map.conf</code>, <code>settings.json</code>, and everything under <code>experts/</code> are outside the subtree and are never modified by pull operations.</p>
+
+      <h4>Will subtree push include my project files?</h4>
+      <p>No. The subtree push extracts only <code>.claude/cuite/</code> and sends it to the remote. Your project code, settings, and domain expertise are excluded by the subtree prefix.</p>
+
+      <h4>Do symlinks survive git clone?</h4>
+      <p>Yes. Git tracks symlinks as part of the repository. When someone clones your project, the symlinks are recreated. If any symlinks break (e.g., after a framework restructuring), run <code>cuite link</code> to refresh them.</p>
+
+      <h4>How do hooks resolve paths?</h4>
+      <p>All hook scripts use <code>$PWD</code> for path resolution. This means they work correctly regardless of where the framework subtree is located, as long as Claude Code is launched from the project root. No hardcoded paths are used anywhere in the hook system.</p>
+
+      <!-- ════════════════════════════════════════════
+           COST GUIDE
+           ════════════════════════════════════════════ -->
+
+      <h2 id="cost-guide">Cost Guide</h2>
+      <p>CUITE costs depend on which workflow you use and how many agents are involved. Here are approximate costs per invocation based on typical usage:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Model</th>
+            <th>Approx. Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/do</code> question</td>
+            <td>haiku</td>
+            <td>~$0.01</td>
+          </tr>
+          <tr>
+            <td><code>/do</code> implementation</td>
+            <td>sonnet x3</td>
+            <td>~$0.10&ndash;0.30</td>
+          </tr>
+          <tr>
+            <td><code>/do-teams</code> 2 teammates</td>
+            <td>sonnet x3</td>
+            <td>~$0.30&ndash;0.80</td>
+          </tr>
+          <tr>
+            <td><code>/do-teams</code> 3 teammates</td>
+            <td>sonnet x4&ndash;5</td>
+            <td>~$0.50&ndash;1.50</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Costs scale primarily with the number of agents spawned and the complexity of the task. Questions are cheap because they use haiku and require only one agent. Full implementation cycles cost more because they involve plan, build, review, and improve phases. Team workflows multiply the cost by the number of parallel specialists.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip</strong>
+        Use <code>/do</code> with Pattern B (question) for quick lookups and Pattern C (simple) for lint/format tasks. Reserve full Pattern A (implementation) and <code>/do-teams</code> for substantial work where the multi-agent cycle pays for itself in quality.
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="docs.html">Documentation</a>
+        <a href="api.html">API Reference</a>
+        <a href="cli.html">CLI Reference</a>
+        <a href="https://github.com/fentas/cuite">GitHub</a>
+      </div>
+      <p class="footer-copy">CUITE &mdash; The Claude sUITE Framework. Code responsibly. Or don't.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
