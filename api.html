@@ -399,8 +399,8 @@ allowed-tools: Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion, TodoWrite</
 
       <!-- detect-injection.sh -->
       <h2 id="hook-injection">detect-injection.sh</h2>
-      <p><strong>When:</strong> PostToolUse (after WebFetch)</p>
-      <p><strong>Purpose:</strong> Instructs Claude to review fetched web content for prompt injection. Suspicious domains added to <code>blocked-domains.txt</code>.</p>
+      <p><strong>When:</strong> PostToolUse (after WebFetch and WebSearch)</p>
+      <p><strong>Purpose:</strong> Two-tier content security gate. <strong>Tier&nbsp;1</strong> (regex): scans <code>tool_output</code> for prompt injection patterns (hard red flags auto-blacklist the domain, medium flags warn). Extracts embedded install commands (<code>npx</code>, <code>pip install</code>, <code>cargo add</code>, <code>curl|bash</code>, etc.) and emits <code>SUPPLY_CHAIN_CHECK</code> markers. <strong>Tier&nbsp;2</strong> (LLM): instructs Claude to perform semantic review of content the regex cannot classify. Suspicious domains are added to <code>blocked-domains.txt</code>.</p>
 
       <!-- track-learnings.sh -->
       <h2 id="hook-learnings">track-learnings.sh</h2>

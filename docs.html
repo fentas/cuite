@@ -717,7 +717,7 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
           <tr>
             <td><code>detect-injection.sh</code></td>
             <td>PostToolUse</td>
-            <td>Scans content fetched via WebFetch for prompt injection patterns. Flags suspicious content and blocks malicious domains.</td>
+            <td>Scans content from WebFetch <em>and</em> WebSearch for prompt injection patterns. Tier&nbsp;1 (regex) auto-blacklists hard red flags and extracts embedded install commands for supply chain verification. Tier&nbsp;2 (LLM) instructs Claude to review anything the regex can&rsquo;t classify.</td>
           </tr>
           <tr>
             <td><code>track-learnings.sh</code></td>
@@ -768,22 +768,61 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
       <p>To add a domain to the whitelist, update the relevant section in <code>.claude/settings.json</code>. The whitelist is project-specific and never overwritten by framework updates.</p>
 
       <h2 id="prompt-injection">Prompt Injection Detection</h2>
-      <p>After every WebFetch operation, the <code>detect-injection.sh</code> hook instructs Claude to review the fetched content for prompt injection red flags. This includes:</p>
-      <ul>
-        <li>Instructions that attempt to override Claude's system prompt or behavior.</li>
-        <li>Content that tries to make Claude ignore safety guidelines.</li>
-        <li>Hidden text or encoded payloads designed to manipulate agent behavior.</li>
-        <li>Social engineering patterns ("ignore previous instructions", "you are now...", etc.).</li>
-      </ul>
+      <p>After every <code>WebFetch</code> and <code>WebSearch</code> operation, the <code>detect-injection.sh</code> hook runs a two-tier defense against prompt injection and malicious content in fetched results.</p>
 
-      <p>When suspicious content is detected:</p>
+      <h3>Tier 1 &mdash; Regex Scanning (shell hook)</h3>
+      <p>The hook reads <code>tool_output</code> and scans it against two pattern sets:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Action</th>
+            <th>Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hard red flag</strong></td>
+            <td>Auto-blacklist + block. Content is discarded. Agent is instructed to distrust the source entirely.</td>
+            <td><code>ignore previous instructions</code>, <code>SECRET AI HELPER</code>, <code>SYSTEM PROMPT</code>, <code>DAN mode</code>, <code>you are now</code>, LLM chat-template injection (<code>&lt;|system|&gt;</code>, <code>[INST]</code>), exfiltration patterns (<code>POST to https://...</code>)</td>
+          </tr>
+          <tr>
+            <td><strong>Medium flag</strong></td>
+            <td>Warning printed. Claude decides whether the content is legitimate (e.g.&nbsp;security documentation discussing injection) or an actual attack.</td>
+            <td><code>hidden instructions</code>, <code>invisible text</code>, <code>font-size: 0</code>, <code>opacity: 0</code>, <code>as an AI</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Embedded Command Extraction</h3>
+      <p>The hook also scans fetched content for install and execution commands. When found, it emits <code>SUPPLY_CHAIN_CHECK</code> markers that force Claude to verify each package before executing:</p>
+      <ul>
+        <li><code>npx &lt;package&gt;</code>, <code>npm install &lt;package&gt;</code>, <code>yarn add</code>, <code>bun add</code></li>
+        <li><code>pip install &lt;package&gt;</code></li>
+        <li><code>cargo install &lt;crate&gt;</code>, <code>cargo add</code></li>
+        <li><code>go install &lt;module&gt;</code></li>
+        <li><code>curl ... | bash</code>, <code>wget ... | sh</code> (pipe-to-shell patterns)</li>
+      </ul>
+      <p>This closes a gap where fetched documentation recommends running a command and an agent blindly executes it. The agent must now check the registry, verify the package exists, and confirm it is not a typosquat before proceeding.</p>
+
+      <h3>Tier 2 &mdash; LLM Review</h3>
+      <p>After regex scanning, the hook always prints a review instruction so Claude performs a semantic check on the content. This catches manipulation attempts that are too nuanced for pattern matching &mdash; social engineering, context-dependent trickery, or obfuscated payloads.</p>
+
+      <h3>When a hard red flag fires</h3>
       <ol>
-        <li>The domain is added to <code>.claude/.cache/blocked-domains.txt</code>.</li>
-        <li>The user is notified about the suspicious content.</li>
-        <li>Future requests to that domain are blocked automatically.</li>
+        <li>The domain is <strong>auto-added</strong> to <code>.claude/.cache/blocked-domains.txt</code>.</li>
+        <li>Claude is instructed to <strong>discard all content</strong> from that source and not follow any of its instructions.</li>
+        <li>The agent that requested the fetch is told the source was <strong>flagged as malicious</strong> and must find an alternative.</li>
+        <li>Future requests to the domain are <strong>blocked</strong> by <code>scope-enforcement.sh</code> at the pre-flight stage.</li>
       </ol>
 
-      <p>This defense layer is especially important when agents fetch documentation, READMEs, or API responses from the internet, where an attacker could embed injection payloads.</p>
+      <div class="callout callout-info">
+        <strong>Note</strong>
+        WebSearch results are also scanned. Since search results aggregate content from multiple domains, the hook logs the search query as the source identifier rather than blacklisting a single domain. If a specific result URL triggers a hard flag during a subsequent WebFetch, that domain gets blacklisted normally.
+      </div>
+
+      <p>This two-tier defense is especially important when agents fetch documentation, READMEs, or API responses from the internet, where an attacker could embed injection payloads targeting the LLM context window.</p>
 
       <!-- ════════════════════════════════════════════
            CUSTOMIZATION
