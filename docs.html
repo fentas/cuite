@@ -96,6 +96,7 @@
 
       <div class="toc-section">
         <div class="toc-label">Customization</div>
+        <a href="#tuning" class="toc-link">Project Tuning</a>
         <a href="#adding-domain" class="toc-link">Adding a Domain</a>
         <a href="#writing-expertise" class="toc-link">Writing Expertise</a>
         <a href="#settings-sync" class="toc-link">Settings Sync</a>
@@ -866,6 +867,72 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
       <!-- ════════════════════════════════════════════
            CUSTOMIZATION
            ════════════════════════════════════════════ -->
+
+      <h2 id="tuning">Project Tuning</h2>
+      <p><code>tuning.conf</code> contains project-level behavioral knobs that all agents read at startup. It lets you standardize git workflow, security sensitivity, and review depth across every agent and session &mdash; so there are no surprises when a subagent makes a commit or fetches web content.</p>
+
+      <p>The file is created automatically by <code>cuite init</code>. Settings are printed by the <code>session-context.sh</code> hook at the start of every session.</p>
+
+      <h3>Available Settings</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Values</th>
+            <th>Default</th>
+            <th>Effect</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>git.gpg-sign</code></td>
+            <td>yes | no</td>
+            <td>no</td>
+            <td>When <code>no</code>, agents use <code>--no-gpg-sign</code> on commits</td>
+          </tr>
+          <tr>
+            <td><code>git.auto-push</code></td>
+            <td>yes | no</td>
+            <td>no</td>
+            <td>When <code>no</code>, agents never push unless the user explicitly asks</td>
+          </tr>
+          <tr>
+            <td><code>git.auto-commit</code></td>
+            <td>yes | no</td>
+            <td>yes</td>
+            <td>Commit after each task or before switching branches. Prevents stash juggling</td>
+          </tr>
+          <tr>
+            <td><code>git.commit-style</code></td>
+            <td>conventional | freeform</td>
+            <td>conventional</td>
+            <td><code>conventional</code> uses <code>feat:</code>, <code>fix:</code>, <code>docs:</code> prefixes</td>
+          </tr>
+          <tr>
+            <td><code>review.depth</code></td>
+            <td>quick | normal | thorough</td>
+            <td>normal</td>
+            <td>Controls how deep the review agent inspects changes</td>
+          </tr>
+          <tr>
+            <td><code>security.injection-sensitivity</code></td>
+            <td>strict | normal | permissive</td>
+            <td>normal</td>
+            <td><strong>strict</strong> auto-blocks medium flags. <strong>permissive</strong> warns on everything, never auto-blocks (useful for security research)</td>
+          </tr>
+          <tr>
+            <td><code>security.supply-chain-verify</code></td>
+            <td>yes | no</td>
+            <td>yes</td>
+            <td>When <code>yes</code>, agents must verify packages before installing. <strong>Not recommended to disable</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <strong>Tip</strong>
+        Start with the defaults and adjust as needed. The most common first change is setting <code>git.gpg-sign = no</code> when GPG is not configured on the machine.
+      </div>
 
       <h2 id="adding-domain">Adding a New Domain</h2>
       <p>You can add a new domain to your CUITE installation either manually or by re-running <code>/cuite-init</code>.</p>
