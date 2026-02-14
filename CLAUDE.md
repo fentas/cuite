@@ -33,6 +33,18 @@ Active hooks enforce boundaries automatically:
 - **SubagentStart** (`inject-expertise.sh`): Injects domain expertise into spawned agents
 - **SessionStart** (`session-context.sh`): Reports domains, activity, blacklist status
 
+## Project Tuning
+
+`tuning.conf` contains project-level behavioral knobs. Settings are printed at session start so all agents share the same expectations. **Always check tuning values before git operations, reviews, or security decisions.**
+
+Key settings:
+
+- `git.gpg-sign` — whether to use `--no-gpg-sign`
+- `git.auto-push` — never push unless user explicitly asks (when `no`)
+- `git.auto-commit` — commit after each task / before branch switches (when `yes`)
+- `git.commit-style` — `conventional` for `feat:`, `fix:`, etc.
+- `security.injection-sensitivity` — `strict` | `normal` | `permissive`
+
 ## Agent Commands
 
 - `/do <task>` — Single-domain orchestration (plan-build-review-improve cycle)

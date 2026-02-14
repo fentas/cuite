@@ -35,6 +35,20 @@ fi
 echo "Commands: /do <task> | /do-teams <task> | /improve [domain]"
 echo ""
 
+# Print active tuning knobs so all agents share the same expectations
+TUNING="$CLAUDE_DIR/cuite/tuning.conf"
+[[ -f "$TUNING" ]] || TUNING="$PWD/tuning.conf"  # dev/standalone fallback
+if [[ -f "$TUNING" ]]; then
+  echo "Project tuning (tuning.conf):"
+  while IFS='=' read -r key value; do
+    key=$(echo "$key" | xargs)
+    value=$(echo "$value" | xargs)
+    [[ -z "$key" || "$key" == \#* ]] && continue
+    printf "  %-35s %s\n" "$key" "$value"
+  done < "$TUNING"
+  echo ""
+fi
+
 # Show recent git activity to prime domain detection
 if command -v git &>/dev/null && git -C "$PROJECT_DIR" rev-parse --git-dir &>/dev/null 2>&1; then
   RECENT=$(git -C "$PROJECT_DIR" log --oneline -5 --no-decorate 2>/dev/null || true)
