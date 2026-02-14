@@ -263,6 +263,78 @@ SendMessage(
 )
 ```
 
+### Peer Communication (opt-in)
+
+By default, all specialist communication flows through you (the team lead). This is the safest pattern — it contains errors, prevents message loops, and keeps you in control of coordination.
+
+However, for **tightly-coupled domain boundaries** (e.g., backend defines an API contract that frontend must consume), you can enable **one-shot peer messaging** between specific teammate pairs. This saves a relay hop through the lead and reduces your context pollution.
+
+**When to enable peer messaging:**
+
+- Two specialists share a contract boundary (API schema, shared types, config format)
+- One specialist produces output another needs to consume immediately
+- The information is factual (a file path, a type definition) — not a decision that needs lead oversight
+
+**When NOT to enable it:**
+
+- Tasks are independent (no shared boundary)
+- The coordination requires a decision (the lead should decide)
+- More than 2 specialists need the same information (use the lead as relay, or the lead can broadcast)
+
+**Guard rails — include ALL of these in the specialist spawn prompt:**
+
+```
+PEER COMMUNICATION (enabled for this task):
+You may send ONE-SHOT messages to {other-specialist-name} for:
+- Sharing API contracts, type definitions, or file paths they need
+- Reporting that a dependency they're waiting on is ready
+
+Rules:
+1. ONE-SHOT ONLY: Send info, do NOT expect or wait for a reply.
+   If you need a response, ask the team lead instead.
+2. NO REPLY CHAINS: If you receive a peer message, do NOT reply
+   to the sender. Use the information and continue your work.
+   If you need clarification, ask the team lead.
+3. MAX 2 PEER MESSAGES per task. If you need more coordination,
+   route through the team lead.
+4. ALWAYS notify the team lead after sending a peer message:
+   "Sent {summary} to {teammate}." so the lead stays informed.
+```
+
+**Example: enabling peer messaging in spawn prompt:**
+
+```
+Task(
+  subagent_type: "general-purpose",
+  team_name: "{project}-{slug}",
+  name: "backend-specialist",
+  prompt: |
+    You are a backend specialist working on: {requirement}
+
+    EXPERTISE: Read .claude/agents/experts/backend/expertise.yaml
+
+    YOUR FILE OWNERSHIP:
+    - src/api/{specific files}
+
+    PEER COMMUNICATION (enabled for this task):
+    You may send ONE-SHOT messages to frontend-specialist for:
+    - Sharing API contracts, type definitions, or file paths they need
+    - Reporting that a dependency they're waiting on is ready
+
+    Rules:
+    1. ONE-SHOT ONLY: Send info, do NOT expect or wait for a reply.
+    2. NO REPLY CHAINS: If you receive a peer message, do NOT reply to the sender.
+    3. MAX 2 PEER MESSAGES per task.
+    4. ALWAYS notify the team lead after sending a peer message.
+
+    To discover teammates: read ~/.claude/teams/{project}-{slug}/config.json
+
+    Check TaskList for your assigned tasks.
+)
+```
+
+**If you do NOT include the peer communication block in the spawn prompt, specialists will only communicate through you.** This is the default and recommended behavior for most tasks.
+
 ---
 
 ## Step 6: Security Review Loop
