@@ -591,6 +591,45 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
       <h3>Council</h3>
       <p>Spawns domain analysts for independent review. Each analyst examines the task from their domain's perspective and provides an assessment. No code is written &mdash; the output is a multi-perspective analysis.</p>
 
+      <h3>Peer Communication (opt-in)</h3>
+      <p>By default, all specialist communication flows through the team lead (hub-and-spoke). This is the safest pattern &mdash; it contains errors at <strong>4.4&times;</strong> amplification vs. <strong>17.2&times;</strong> in uncoordinated systems, prevents message loops, and keeps the lead in control of coordination.</p>
+
+      <p>For <strong>tightly-coupled domain boundaries</strong> (e.g., backend defines an API contract that frontend must consume), the team lead can enable <strong>one-shot peer messaging</strong> between specific teammate pairs. This saves a relay hop and reduces lead context pollution.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Rule</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>One-shot only</strong> &mdash; send info, do not expect a reply</td>
+            <td>Prevents reply chains that escalate into message loops and unbounded token burn</td>
+          </tr>
+          <tr>
+            <td><strong>No reply chains</strong> &mdash; if you receive a peer message, do not reply to the sender</td>
+            <td>Eliminates the #1 multi-agent failure mode: cascading wake-ups between two agents</td>
+          </tr>
+          <tr>
+            <td><strong>Max 2 peer messages per task</strong></td>
+            <td>Bounds the token overhead. If more coordination is needed, route through the lead</td>
+          </tr>
+          <tr>
+            <td><strong>Notify the lead</strong> after every peer message</td>
+            <td>Maintains observability. The lead stays informed without carrying the full message in context</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Peer communication is <strong>not enabled by default</strong>. The team lead must explicitly include the peer communication block in the specialist&rsquo;s spawn prompt. Without it, specialists only talk to the lead.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip</strong>
+        Use peer messaging when two specialists share a contract boundary (API schema, shared types, config format) and one produces output the other needs immediately. Do not use it when coordination requires a decision &mdash; route those through the lead.
+      </div>
+
       <h2 id="improve-workflow">/improve &mdash; Maintenance</h2>
       <p>The <code>/improve</code> command is a standalone expertise update workflow. It reviews recent work and updates domain knowledge without building anything new.</p>
 
