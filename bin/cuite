@@ -41,6 +41,7 @@ declare -A STARTERS=(
   ["${CLAUDE_DIR}/domains.md"]="${CUITE_PREFIX}/domains.md"
   ["${CLAUDE_DIR}/settings.local.json"]="${CUITE_PREFIX}/settings.local.json"
   ["CLAUDE.md"]="${CUITE_PREFIX}/CLAUDE.md"
+  ["${CLAUDE_DIR}/tuning.conf"]="${CUITE_PREFIX}/tuning.conf"
   ["${CLAUDE_DIR}/agents/agent-registry.json"]="${CUITE_PREFIX}/agents/agent-registry.json"
 )
 
@@ -101,7 +102,8 @@ cuite::init() {
   echo "  3. Edit CLAUDE.md                    — project structure table"
   echo "  4. Edit .claude/domains.md           — domain registry (keywords, paths, commands)"
   echo "  5. Edit .claude/domain-map.conf      — path-to-domain mappings"
-  echo "  6. Edit .claude/settings.json        — WebFetch whitelist domains"
+  echo "  6. Edit .claude/tuning.conf           — behavioral knobs (git, security, review)"
+  echo "  7. Edit .claude/settings.json        — WebFetch whitelist domains"
 }
 
 cuite::link() {
@@ -253,7 +255,7 @@ cuite::status() {
   echo ""
   info "Project files:"
   local f
-  for f in settings.json domain-map.conf domains.md settings.local.json; do
+  for f in settings.json domain-map.conf domains.md tuning.conf settings.local.json; do
     if [[ -f "${CLAUDE_DIR}/${f}" && ! -L "${CLAUDE_DIR}/${f}" ]]; then
       ok "  ${f}"
     elif [[ -L "${CLAUDE_DIR}/${f}" ]]; then
