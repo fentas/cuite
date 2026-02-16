@@ -348,13 +348,19 @@ teammates.md         # Workflow reference</code></pre>
 settings.local.json  # Per-user (gitignored)
 domain-map.conf      # Your path-to-domain mappings
 domains.md           # Your domain registry
+tuning.conf          # Behavioral knobs (git, security, review)
 agents/agent-registry.json
 agents/experts/{your-domains}/
 .cache/              # Session data (gitignored)</code></pre>
 
       <h4>Symlinks (tracked by git, refreshed by <code>cuite link</code>)</h4>
-      <pre><code data-lang="bash">hooks -> cuite/hooks
-commands -> cuite/commands
+      <pre><code data-lang="bash">hooks/                            # real directory (per-file symlinks)
+  session-context.sh -> ../cuite/hooks/session-context.sh
+  detect-injection.sh -> ...      # each hook file individually
+  my-custom-hook.sh               # your own hooks live here too
+commands/                         # real directory (per-file symlinks)
+  do.md -> ../cuite/commands/do.md
+  do-teams.md -> ...              # each command individually
 template.md -> cuite/template.md
 teammates.md -> cuite/teammates.md
 agents/templates -> ../cuite/agents/templates
