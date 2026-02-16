@@ -197,8 +197,14 @@ direnv allow</code></pre>
   CLAUDE.md                       # customized from template
   .claude/
     cuite/                        # git subtree (framework)
-    hooks -&gt; cuite/hooks          # symlink
-    commands -&gt; cuite/commands    # symlink
+    hooks/                        # real directory
+      session-context.sh -&gt; ../cuite/hooks/session-context.sh
+      detect-injection.sh -&gt; ../cuite/hooks/detect-injection.sh
+      my-custom-hook.sh           # YOUR hook (not a symlink)
+      ...
+    commands/                     # real directory
+      do.md -&gt; ../cuite/commands/do.md
+      ...
     agents/
       *.md -&gt; cuite/agents/*.md   # symlinks
       templates -&gt; cuite          # symlink
@@ -206,9 +212,10 @@ direnv allow</code></pre>
         your-domain/              # YOUR files (never pushed)
     settings.json                 # YOUR file
     domains.md                    # YOUR file
-    domain-map.conf               # YOUR file</code></pre>
+    domain-map.conf               # YOUR file
+    tuning.conf                   # YOUR file</code></pre>
 
-      <p>The key insight is separation of concerns: the framework code travels via subtree, your domain expertise stays local, and symlinks make everything discoverable by Claude Code without any path hacks.</p>
+      <p>The key insight is separation of concerns: the framework code travels via subtree, your domain expertise stays local, and symlinks make everything discoverable by Claude Code without any path hacks. Hooks and commands are symlinked as <strong>individual files</strong> (not whole directories), so you can drop custom hooks and commands alongside framework ones.</p>
 
       <h2 id="file-categories">File Categories</h2>
       <p>Every file in the CUITE installation falls into one of three categories:</p>
@@ -777,7 +784,7 @@ User: "Apply suggestions?" &rarr; [Yes] / [Skip]
         </tbody>
       </table>
 
-      <p>All hooks are shell scripts located at <code>.claude/cuite/hooks/</code> and symlinked to <code>.claude/hooks/</code>. They are registered in <code>.claude/settings.json</code>.</p>
+      <p>All hooks are shell scripts located at <code>.claude/cuite/hooks/</code> and symlinked individually to <code>.claude/hooks/</code>. They are registered in <code>.claude/settings.json</code>. Because each file is symlinked separately, you can add your own custom hooks in <code>.claude/hooks/</code> alongside the framework hooks.</p>
 
       <h2 id="supply-chain">Supply Chain Verification</h2>
       <p>When CUITE hooks detect that an agent is installing a new package (via npm, pip, cargo, go get, or similar), the <code>scope-enforcement.sh</code> hook prints a <code>SUPPLY_CHAIN_CHECK</code> marker.</p>
@@ -1066,7 +1073,7 @@ git commit -m "merge cuite updates"</code></pre>
       <p>No. The subtree push extracts only <code>.claude/cuite/</code> and sends it to the remote. Your project code, settings, and domain expertise are excluded by the subtree prefix.</p>
 
       <h4>Do symlinks survive git clone?</h4>
-      <p>Yes. Git tracks symlinks as part of the repository. When someone clones your project, the symlinks are recreated. If any symlinks break (e.g., after a framework restructuring), run <code>cuite link</code> to refresh them.</p>
+      <p>Yes. Git tracks symlinks as part of the repository. When someone clones your project, the symlinks are recreated. If any symlinks break (e.g., after a framework restructuring), run <code>cuite link</code> to refresh them. Note: <code>hooks/</code> and <code>commands/</code> are real directories with per-file symlinks inside them, so your custom hooks and commands are also preserved.</p>
 
       <h4>How do hooks resolve paths?</h4>
       <p>All hook scripts use <code>$PWD</code> for path resolution. This means they work correctly regardless of where the framework subtree is located, as long as Claude Code is launched from the project root. No hardcoded paths are used anywhere in the hook system.</p>
