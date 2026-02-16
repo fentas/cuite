@@ -19,9 +19,6 @@ err()   { echo -e "$(_tty '0;31')✗$(_tty 0) ${*}" >&2; }
 
 # Single source of truth: link-path → target (relative to link parent).
 declare -A LINKS=(
-  # directories
-  ["${CLAUDE_DIR}/hooks"]="cuite/hooks"
-  ["${CLAUDE_DIR}/commands"]="cuite/commands"
   # core agents
   ["${CLAUDE_DIR}/agents/templates"]="../cuite/agents/templates"
   ["${CLAUDE_DIR}/agents/build-agent.md"]="../cuite/agents/build-agent.md"
@@ -33,6 +30,14 @@ declare -A LINKS=(
   # docs
   ["${CLAUDE_DIR}/template.md"]="cuite/template.md"
   ["${CLAUDE_DIR}/teammates.md"]="cuite/teammates.md"
+)
+
+# Directories where files are symlinked individually (not the directory itself).
+# This allows users to add custom hooks/commands alongside framework ones.
+# Format: target-dir (under CUITE_PREFIX) → link-dir (under CLAUDE_DIR)
+declare -A FILE_LINK_DIRS=(
+  ["hooks"]="hooks"
+  ["commands"]="commands"
 )
 
 declare -A STARTERS=(
@@ -112,17 +117,43 @@ cuite::link() {
   info "Refreshing symlinks..."
   mkdir -p "${CLAUDE_DIR}/agents/experts" "${CLAUDE_DIR}/.cache"
 
-  local link target
+  local link target _count=0
+
+  # Static links (agents, docs, etc.)
   for link in "${!LINKS[@]}"; do
     target="${LINKS[${link}]}"
     mkdir -p "$(dirname "${link}")"
     ln -sfn "${target}" "${link}"
+    ((_count++)) || true
+  done
+
+  # File-level links for hooks/ and commands/ directories.
+  # Migrate: if the directory is a symlink from the old layout, replace it.
+  local src_dir link_dir file
+  for src_dir in "${!FILE_LINK_DIRS[@]}"; do
+    link_dir="${CLAUDE_DIR}/${FILE_LINK_DIRS[${src_dir}]}"
+
+    # Migration: old directory symlink → real directory
+    if [[ -L "${link_dir}" ]]; then
+      rm "${link_dir}"
+      info "  Migrated ${link_dir} from directory symlink to file-level links"
+    fi
+    mkdir -p "${link_dir}"
+
+    # Symlink each file: .claude/hooks/foo.sh → ../cuite/hooks/foo.sh
+    for file in "${CUITE_PREFIX}/${src_dir}"/*; do
+      [[ -f "${file}" ]] || continue
+      local fname
+      fname=$(basename "${file}")
+      ln -sfn "../cuite/${src_dir}/${fname}" "${link_dir}/${fname}"
+      ((_count++)) || true
+    done
   done
 
   [[ ! -f "${CUITE_PREFIX}/.cache/.gitignore" ]] || \
     cp "${CUITE_PREFIX}/.cache/.gitignore" "${CLAUDE_DIR}/.cache/.gitignore"
 
-  ok "Symlinks refreshed (${#LINKS[@]} links)"
+  ok "Symlinks refreshed (${_count} links)"
 }
 
 ###
@@ -236,6 +267,8 @@ cuite::status() {
   echo ""
   info "Symlinks:"
   local link target _ok=0 _broken=0
+
+  # Static links
   for link in $(printf '%s\n' "${!LINKS[@]}" | sort); do
     target="${LINKS[${link}]}"
     if [[ -L "${link}" ]] && [[ "$(readlink "${link}")" == "${target}" ]]; then
@@ -248,6 +281,33 @@ cuite::status() {
       err "  ${link#"${CLAUDE_DIR}"/} — not a symlink"
       ((_broken++)) || true
     fi
+  done
+
+  # File-level links (hooks, commands)
+  local src_dir link_dir file fname expected
+  for src_dir in $(printf '%s\n' "${!FILE_LINK_DIRS[@]}" | sort); do
+    link_dir="${CLAUDE_DIR}/${FILE_LINK_DIRS[${src_dir}]}"
+    if [[ -L "${link_dir}" ]]; then
+      warn "  ${src_dir}/ is a directory symlink (run 'cuite link' to migrate)"
+      ((_broken++)) || true
+      continue
+    fi
+    for file in "${CUITE_PREFIX}/${src_dir}"/*; do
+      [[ -f "${file}" ]] || continue
+      fname=$(basename "${file}")
+      link="${link_dir}/${fname}"
+      expected="../cuite/${src_dir}/${fname}"
+      if [[ -L "${link}" ]] && [[ "$(readlink "${link}")" == "${expected}" ]]; then
+        ok "  ${src_dir}/${fname} → ${expected}"
+        ((_ok++)) || true
+      elif [[ -L "${link}" ]]; then
+        warn "  ${src_dir}/${fname} → $(readlink "${link}")  (expected: ${expected})"
+        ((_broken++)) || true
+      else
+        err "  ${src_dir}/${fname} — not a symlink"
+        ((_broken++)) || true
+      fi
+    done
   done
   echo "  (${_ok} ok, ${_broken} need fixing)"
 
